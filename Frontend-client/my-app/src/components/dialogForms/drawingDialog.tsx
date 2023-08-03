@@ -10,10 +10,9 @@ import {
   Stack,
 } from "@mui/material";
 
-import DrawingNumberText from "./drawingDialog/drawingTextfield";
-import DrawingDescSelect from "./drawingDialog/selectDrawingDesc";
+
 import ItemsTextFields from "./itemsDialog/itemsTextfields";
-import DrawingsFormFields from "./drawingDialog/drawingDialogForm";
+import {DrawingsFormFields} from "./drawingDialog/drawingDialogForm";
 
 export const AddDrawingsForm = () => {
   const [open, setOpen] = useState(false);
