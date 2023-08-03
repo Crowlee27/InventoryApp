@@ -6,7 +6,7 @@ export const GridSearchBar = () => {
   return (
     <div className="gridSearchBar">
       <div className="searchBar">
-        <SearchBar />
+        <SearchBar name="search" label="Search" id="search" />
         <Button variant="contained" color="primary" className="resetButton">
           Reset
         </Button>
