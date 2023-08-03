@@ -1,0 +1,19 @@
+.searchBar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .searchButton {
+    margin-left: 10px;
+  }
+
+  .resetButton {
+    margin-left: 10px;
+  }
+}
+
+.gridSearchBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
