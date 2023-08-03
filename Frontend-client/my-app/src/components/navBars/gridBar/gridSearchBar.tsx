@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "@mui/material";
 import { SearchBar } from "../searchBar/searchBar";
+import { AddDrawingsForm } from "../../dialogForms/drawingDialog";
 
 export const GridSearchBar = () => {
   return (
@@ -13,9 +14,10 @@ export const GridSearchBar = () => {
       </div>
 
       <div>
-        <Button variant="contained" color="primary" className="CreateDrawing">
+        {/* <Button variant="contained" color="primary" className="CreateDrawing">
           Create Drawing
-        </Button>
+        </Button> */}
+              <AddDrawingsForm/>
       </div>
     </div>
   );
