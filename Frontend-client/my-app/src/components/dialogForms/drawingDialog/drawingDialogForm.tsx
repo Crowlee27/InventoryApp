@@ -1,13 +1,21 @@
 import React from "react";
-import DrawingTextfield from "./drawingTextfield";
-import SelectDrawingDescription from "./selectDrawingDesc";
+import { DrawingNumberText } from "./drawingTextfield";
+import { DrawingDescSelect } from "./selectDrawingDesc";
 
-export default function DrawingsFormFields() { 
-    return (
-        <div>
-            <DrawingTextfield />
-            <SelectDrawingDescription />
-
-        </div>
-    )
-}
+export const DrawingsFormFields = () => {
+  return (
+    <div>
+      <DrawingNumberText
+        id="drawingNumber"
+        name="drawingNumber"
+        label="Drawing Number"
+      />
+      <DrawingDescSelect
+        id="drawingDescription"
+        name="drawingDescription"
+        label="Drawing Description"
+        value=""
+      />
+    </div>
+  );
+};
