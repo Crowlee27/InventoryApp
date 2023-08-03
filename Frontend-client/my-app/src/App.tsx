@@ -6,9 +6,9 @@ import { SearchBar } from "./components/navBars/searchBar/searchBar";
 function App() {
   return (
     <div>
-      {/* <AddDrawingsForm /> */}
-      <SearchBar />
-      <GridSearchBar/>
+      <AddDrawingsForm />
+      {/* <SearchBar name="search" label="Search" id="search" /> */}
+      {/* <GridSearchBar/> */}
     </div>
   );
 }
