@@ -5,7 +5,14 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 
-export default function DrawingDescSelect() {
+export const DrawingDescSelect = (props: IDrawingDescSelect) => {
+  const {
+    label = "Drawing Description",
+    name = "drawingDescription",
+    id = "drawingDescription",
+    value = "",
+  } = props;
+
   const [description, setDescription] = React.useState("");
 
   const handleChange = (event: SelectChangeEvent) => {
@@ -14,15 +21,13 @@ export default function DrawingDescSelect() {
 
   return (
     <Box>
-      <FormControl fullWidth variant="standard" >
-        <InputLabel id="demo-simple-select-label">
-          Drawing Description
-        </InputLabel>
+      <FormControl fullWidth variant="standard">
+        <InputLabel id="drawingDescription">Drawing Description</InputLabel>
         <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={description}
-          label="Drawing Description"
+          labelId={`${name}-id`}
+          id={`${id}-id-select`}
+          value={value}
+          label={label}
           onChange={handleChange}
         >
           <MenuItem value={"Piping Iso"}>Piping ISO</MenuItem>
@@ -30,4 +35,4 @@ export default function DrawingDescSelect() {
       </FormControl>
     </Box>
   );
-}
+};
