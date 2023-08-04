@@ -2,13 +2,13 @@ import React from "react";
 import TextField from "@mui/material/TextField";
 
 export const ItemDescriptionTextField = (props: ITextField) => {
+  const {
+    label = "Item Description",
+    name = "itemDescription",
+    id = "itemDescription",
+  } = props;
+
   return (
-    <TextField
-      id="itemDescription"
-      label="Item Description"
-      name="itemDescription"
-      fullWidth
-      variant="standard"
-    />
+    <TextField id={id} label={label} name={name} fullWidth variant="standard" />
   );
 };
