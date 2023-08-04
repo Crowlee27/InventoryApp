@@ -5,16 +5,16 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 
 interface IDrawingGridRow {
-  ID: string;
+  ID: number;
   Number: string;
   Description: string;
 }
 
 export const DrawingGrid = () => {
   const rowData: IDrawingGridRow[] = [
-    { ID: "1", Number: "ISO-100-AA", Description: "Piping ISO" },
-    { ID: "2", Number: "ISO-101--AA", Description: "Piping ISO" },
-    { ID: "3", Number: "ISO-102--AA", Description: "Piping ISO" },
+    { ID: 1, Number: "ISO-100-AA", Description: "Piping ISO" },
+    { ID: 2, Number: "ISO-101--AA", Description: "Piping ISO" },
+    { ID: 3, Number: "ISO-102--AA", Description: "Piping ISO" },
   ];
 
   const columnDefs: ColDef[] = [
