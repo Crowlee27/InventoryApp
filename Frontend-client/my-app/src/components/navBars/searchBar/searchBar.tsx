@@ -1,7 +1,7 @@
 import React from "react";
 import { TextField, Button } from "@mui/material";
 
-export const SearchBar = (props: ISearchBar) => {
+export const SearchBar = (props: ITextField) => {
   return (
     <div className="searchBar">
       <TextField
