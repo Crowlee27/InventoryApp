@@ -1,7 +1,7 @@
 import React from "react";
 import TextField from "@mui/material/TextField";
 
-export const DrawingNumberText = (props: IDrawingNumberText) => {
+export const DrawingNumberText = (props: ITextField) => {
   const {
     label = "Drawing Number",
     name = "drawingNumber",
