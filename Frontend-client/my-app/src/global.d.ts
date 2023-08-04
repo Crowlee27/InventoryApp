@@ -1,19 +1,17 @@
 export {};
 
 declare global {
-  interface ISearchBar {
+  interface ITextField {
     name: string;
     label: string;
     id: string;
   }
 
-  interface IDrawingNumberText {
-    label: string;
-    id: string;
-    name: string;
+  interface ITextFieldsProps {
+    textFields: ITextField[];
   }
 
-  interface IDrawingDescSelect {
+  interface ISelectField {
     label: string;
     name: string;
     id: string;
