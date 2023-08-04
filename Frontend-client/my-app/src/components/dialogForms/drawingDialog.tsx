@@ -5,14 +5,10 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  TextField,
-  Box,
-  Stack,
 } from "@mui/material";
 
-
-import ItemsTextFields from "./itemsDialog/itemsTextfields";
-import {DrawingsFormFields} from "./drawingDialog/drawingDialogForm";
+import { DrawingsFormFields } from "./drawingDialog/drawingDialogForm";
+import { ItemsDialogForm } from "./itemsDialog/itemsDialogForm";
 
 export const AddDrawingsForm = () => {
   const [open, setOpen] = useState(false);
@@ -46,7 +42,7 @@ export const AddDrawingsForm = () => {
       case 2:
         return (
           <DialogContent>
-            <ItemsTextFields />
+            <ItemsDialogForm />
           </DialogContent>
         );
 
