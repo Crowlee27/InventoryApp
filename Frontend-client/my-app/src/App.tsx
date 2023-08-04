@@ -7,8 +7,8 @@ function App() {
   return (
     <div>
       <AddDrawingsForm />
-      {/* <SearchBar name="search" label="Search" id="search" /> */}
-      {/* <GridSearchBar/> */}
+      <SearchBar />
+      <GridSearchBar />
     </div>
   );
 }
