@@ -1,17 +1,11 @@
 import React from "react";
 import { TextField, Button } from "@mui/material";
+import { SearchTextfield } from "./searchTextfield";
 
-export const SearchBar = (props: ITextField) => {
+export const SearchBar = () => {
   return (
     <div className="searchBar">
-      <TextField
-        id="search"
-        label={props.label}
-        name="search"
-        variant="outlined"
-        size="small"
-        
-      />
+      <SearchTextfield id="search" label="Search" name="search" />
       <Button variant="contained" color="primary" className="searchButton">
         Search
       </Button>
