@@ -11,9 +11,6 @@ export const SearchTextfield = (props: ITextField) => {
         variant="outlined"
         size="small"
       />
-      <Button variant="contained" color="primary" className="searchButton">
-        Search
-      </Button>
     </div>
   );
 };
