@@ -5,7 +5,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 
-export const DrawingDescSelect = (props: IDrawingDescSelect) => {
+export const DrawingDescSelect = (props: ISelectField) => {
   const {
     label = "Drawing Description",
     name = "drawingDescription",
