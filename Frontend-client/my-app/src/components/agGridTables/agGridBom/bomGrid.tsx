@@ -4,14 +4,6 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 
-interface IBomGridRow {
-  ID: number;
-  Drawing: number;
-  Catalog: number;
-  Tag: string;
-  Alias: string;
-}
-
 export const BomGrid = () => {
   const rowData: IBomGridRow[] = [
     { ID: 1, Drawing: 1, Catalog: 1, Tag: "10-AA-150-1", Alias: "" },

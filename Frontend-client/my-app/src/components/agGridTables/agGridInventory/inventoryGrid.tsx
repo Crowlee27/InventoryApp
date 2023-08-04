@@ -4,16 +4,6 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 
-interface IInventoryGridRow {
-  ID: number;
-  Bom: number;
-  Purchased: number;
-  Received: number;
-  Outstanding?: number;
-  Issued: number;
-  Remaining: number;
-}
-
 export const InventoryGrid = () => {
   const rowData: IInventoryGridRow[] = [
     { ID: 1, Bom: 1, Purchased: 1, Received: 1, Issued: 1, Remaining: 0 },

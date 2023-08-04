@@ -4,12 +4,6 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 
-interface IDrawingGridRow {
-  ID: number;
-  Number: string;
-  Description: string;
-}
-
 export const DrawingGrid = () => {
   const rowData: IDrawingGridRow[] = [
     { ID: 1, Number: "ISO-100-AA", Description: "Piping ISO" },
