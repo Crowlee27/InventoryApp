@@ -1,4 +1,5 @@
 import React from "react";
+import { BomGrid } from "./components/agGridTables/agGridBom/bomGrid";
 import { CatalogGrid } from "./components/agGridTables/agGridCatalog/catalogGrid";
 import { DrawingGrid } from "./components/agGridTables/agGridDrawing/drawingGrid";
 import { AddDrawingsForm } from "./components/dialogForms/drawingDialog";
@@ -12,7 +13,8 @@ function App() {
       <SearchBar />
       <GridSearchBar /> */}
       {/* <DrawingGrid/> */}
-      <CatalogGrid/>
+      {/* <CatalogGrid/> */}
+      <BomGrid/>
     </div>
   );
 }
