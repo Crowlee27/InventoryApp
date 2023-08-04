@@ -1,4 +1,5 @@
 import React from "react";
+import { DrawingGrid } from "./components/agGridTables/agGridDrawing/drawingGrid";
 import { AddDrawingsForm } from "./components/dialogForms/drawingDialog";
 import { GridSearchBar } from "./components/navBars/gridBar/gridSearchBar";
 import { SearchBar } from "./components/navBars/searchBar/searchBar";
@@ -6,9 +7,10 @@ import { SearchBar } from "./components/navBars/searchBar/searchBar";
 function App() {
   return (
     <div>
-      <AddDrawingsForm />
+      {/* <AddDrawingsForm />
       <SearchBar />
-      <GridSearchBar />
+      <GridSearchBar /> */}
+      <DrawingGrid/>
     </div>
   );
 }
