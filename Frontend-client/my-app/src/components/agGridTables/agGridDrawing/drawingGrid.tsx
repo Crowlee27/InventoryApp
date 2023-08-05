@@ -19,6 +19,8 @@ export const DrawingGrid = () => {
       checkboxSelection: true,
       headerCheckboxSelection: true,
       editable: false,
+      pinned: "left",
+      width: 100,
     },
     { field: "Number" },
     { field: "Description" },
@@ -29,16 +31,16 @@ export const DrawingGrid = () => {
   const gridRef = React.createRef<AgGridReact>();
 
   const handleDeleteRows = () => {
-    const selectedNodes = gridRef?.current?.api?.getSelectedNodes();
-    if (selectedNodes && selectedNodes.length > 0) {
+    const selectedRowData = gridRef?.current?.api?.getSelectedRows();
+    if (selectedRowData && selectedRowData.length > 0) {
       setShowConfirmation(true);
     } else setShowConfirmation(false);
   };
 
   const handleConfirmDelete = () => {
-    const selectedNodes = gridRef?.current?.api?.getSelectedNodes();
-    if (selectedNodes) {
-      const selectedRowData = selectedNodes.map((node) => node.data);
+    const selectedRowData = gridRef?.current?.api?.getSelectedRows();
+    if (selectedRowData) {
+      const selectedRowDatas = selectedRowData.map((row) => row.data);
       const updatedRowData = rowData.filter(
         (row) => !selectedRowData.includes(row)
       );
