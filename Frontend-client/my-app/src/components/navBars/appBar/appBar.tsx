@@ -10,6 +10,7 @@ import InputBase from "@mui/material/InputBase";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import { MenuItem, Menu } from "@mui/material";
+import { Link } from "react-router-dom";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -102,10 +103,10 @@ export const SearchAppBar = () => {
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
       >
-        <MenuItem onClick={handleMenuClose}>Drawing</MenuItem>
-        <MenuItem onClick={handleMenuClose}>Catalog</MenuItem>
-        <MenuItem onClick={handleMenuClose}>BOM</MenuItem>
-        <MenuItem onClick={handleMenuClose}>Inventory</MenuItem>
+        <MenuItem component={Link} to="/" onClick={handleMenuClose}>Drawing</MenuItem>
+        <MenuItem component={Link} to="/catalog" onClick={handleMenuClose}>Catalog</MenuItem>
+        <MenuItem component={Link} to="/bom" onClick={handleMenuClose}>BOM</MenuItem>
+        <MenuItem component={Link} to="/inventory" onClick={handleMenuClose}>Inventory</MenuItem>
       </Menu>
     </Box>
   );

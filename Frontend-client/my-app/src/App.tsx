@@ -1,4 +1,6 @@
 import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { BomGrid } from "./components/agGridTables/agGridBom/bomGrid";
 import { CatalogGrid } from "./components/agGridTables/agGridCatalog/catalogGrid";
 import { DrawingGrid } from "./components/agGridTables/agGridDrawing/drawingGrid";
@@ -10,19 +12,21 @@ import { SearchBar } from "./components/navBars/searchBar/searchBar";
 
 function App() {
   return (
-    <div>
-      <SearchAppBar />
-      <h1>Page Name</h1>
-      {/* <AddDrawingsForm /> */}
-      {/* <SearchBar /> */}
-      <GridSearchBar />
-      <div className="gridContainer">
-        <DrawingGrid />
-        {/* <CatalogGrid/> */}
-        {/* <BomGrid/> */}
-        {/* <InventoryGrid/> */}
+    <Router>
+      <div>
+        <SearchAppBar />
+        <h1>Page Name</h1>
+        <GridSearchBar />
+        <main className="gridContainer">
+          <Routes>
+            <Route path="/" element={<DrawingGrid />} />
+            <Route path="/catalog" element={<CatalogGrid />} />
+            <Route path="/bom" element={<BomGrid />} />
+            <Route path="/inventory" element={<InventoryGrid />} />
+          </Routes>
+        </main>
       </div>
-    </div>
+    </Router>
   );
 }
 
