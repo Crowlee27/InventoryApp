@@ -16,7 +16,7 @@ function App() {
       {/* <AddDrawingsForm /> */}
       {/* <SearchBar /> */}
       <GridSearchBar />
-      <div style={{ display: "flex" }}>
+      <div className="gridContainer">
         <DrawingGrid />
         {/* <CatalogGrid/> */}
         {/* <BomGrid/> */}

@@ -14,11 +14,18 @@ export const DrawingGrid = () => {
   ]);
 
   const [columnDefs, setColumnDefs] = useState<ColDef[]>([
-    { field: "ID", checkboxSelection: true, headerCheckboxSelection: true },
-    { field: "Number", editable: true, cellEditor: "agTextCellEditor" },
-    { field: "Description", editable: true, cellEditor: "agTextCellEditor" },
+    {
+      field: "ID",
+      checkboxSelection: true,
+      headerCheckboxSelection: true,
+      editable: false,
+    },
+    { field: "Number" },
+    { field: "Description" },
   ]);
+
   const [showConfirmation, setShowConfirmation] = useState(false);
+
   const gridRef = React.createRef<AgGridReact>();
 
   const handleDeleteRows = () => {
@@ -44,6 +51,7 @@ export const DrawingGrid = () => {
     () => ({
       sortable: true,
       filter: true,
+      editable: true,
       flex: 1,
       filterParams: {
         buttons: ["apply", "reset"],

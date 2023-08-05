@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { ColDef } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
+import { DeleteButton } from "../../specialButtons/deleteButton";
+import { DeleteConfirmationDialog } from "../../dialogForms/deleteDialog/deleteDialog";
 
 export const InventoryGrid = () => {
-  const rowData: IInventoryGridRow[] = [
+  const [rowData, setRowData] = useState([
     { ID: 1, Bom: 1, Purchased: 1, Received: 1, Issued: 1, Remaining: 0 },
     { ID: 2, Bom: 2, Purchased: 1, Received: 1, Issued: 1, Remaining: 0 },
     {
@@ -35,24 +37,77 @@ export const InventoryGrid = () => {
       Issued: 16,
       Remaining: 0,
     },
-  ];
+  ]);
 
-  const columnDefs: ColDef[] = [
-    { field: "ID" },
+  const [columnDefs, setColumnDefs] = useState<ColDef[]>([
+    {
+      field: "ID",
+      checkboxSelection: true,
+      headerCheckboxSelection: true,
+      editable: false,
+    },
     { field: "Bom" },
     { field: "Purchased" },
     { field: "Received" },
     { field: "Outstanding" },
     { field: "Issued" },
     { field: "Remaining" },
-  ];
+  ]);
+
+  const [showConfirmation, setShowConfirmation] = useState(false);
+
+  const gridRef = React.createRef<AgGridReact>();
+
+  const handleDeleteRows = () => {
+    const selectedNodes = gridRef?.current?.api?.getSelectedNodes();
+    if (selectedNodes && selectedNodes.length > 0) {
+      setShowConfirmation(true);
+    } else setShowConfirmation(false);
+  };
+
+  const handleConfirmDelete = () => {
+    const selectedNodes = gridRef?.current?.api?.getSelectedNodes();
+    if (selectedNodes) {
+      const selectedRowData = selectedNodes.map((node) => node.data);
+      const updatedRowData = rowData.filter(
+        (row) => !selectedRowData.includes(row)
+      );
+      setRowData(updatedRowData);
+    }
+    setShowConfirmation(false);
+  };
+
+  const defaultColDef = useMemo(
+    () => ({
+      sortable: true,
+      filter: true,
+      editable: true,
+      flex: 1,
+      filterParams: {
+        buttons: ["apply", "reset"],
+      },
+    }),
+    []
+  );
 
   return (
     <div
       className="ag-theme-alpine"
       style={{ height: "100vh", width: "100vw" }}
     >
-      <AgGridReact rowData={rowData} columnDefs={columnDefs} />
+      <DeleteButton onClick={handleDeleteRows} />
+      <DeleteConfirmationDialog
+        open={showConfirmation}
+        onClose={() => setShowConfirmation(false)}
+        onConfirm={handleConfirmDelete}
+      />
+      <AgGridReact
+        rowData={rowData}
+        columnDefs={columnDefs}
+        defaultColDef={defaultColDef}
+        rowSelection="multiple"
+        ref={gridRef}
+      />
     </div>
   );
 };
