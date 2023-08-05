@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@mui/material";
 import { SearchBar } from "../searchBar/searchBar";
-import { AddDrawingsForm } from "../../dialogForms/drawingDialog";
+import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog";
 
 export const GridSearchBar = () => {
   return (
