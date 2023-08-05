@@ -4,7 +4,7 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import { DeleteButton } from "../../specialButtons/deleteButton";
-import { DeleteConfirmationDialog } from "../../dialogForms/deleteDialog";
+import { DeleteConfirmationDialog } from "../../dialogForms/deleteDialog/deleteDialog";
 
 export const DrawingGrid = () => {
   const [rowData, setRowData] = useState([

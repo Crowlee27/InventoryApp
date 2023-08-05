@@ -4,7 +4,7 @@ import { CatalogGrid } from "./components/agGridTables/agGridCatalog/catalogGrid
 import { DrawingGrid } from "./components/agGridTables/agGridDrawing/drawingGrid";
 import { InventoryGrid } from "./components/agGridTables/agGridInventory/inventoryGrid";
 import { SearchAppBar } from "./components/navBars/appBar/appBar";
-import { AddDrawingsForm } from "./components/dialogForms/addDrawingDialog";
+import { AddDrawingsForm } from "./components/dialogForms/addDrawingDialog/addDrawingDialog";
 import { GridSearchBar } from "./components/navBars/gridBar/gridSearchBar";
 import { SearchBar } from "./components/navBars/searchBar/searchBar";
 

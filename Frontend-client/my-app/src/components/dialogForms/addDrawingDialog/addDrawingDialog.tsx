@@ -7,8 +7,8 @@ import {
   DialogTitle,
 } from "@mui/material";
 
-import { DrawingsFormFields } from "./drawingDialog/drawingDialogForm";
-import { ItemsDialogForm } from "./itemsDialog/itemsDialogForm";
+import { DrawingsFormFields } from "../drawingDialog/drawingDialogForm";
+import { ItemsDialogForm } from "../itemsDialog/itemsDialogForm";
 
 export const AddDrawingsForm = () => {
   const [open, setOpen] = useState(false);
