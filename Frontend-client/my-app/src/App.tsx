@@ -12,16 +12,16 @@ function App() {
   return (
     <div>
       <SearchAppBar />
-      <h1>
-        Page Name
-      </h1>
+      <h1>Page Name</h1>
       {/* <AddDrawingsForm /> */}
       {/* <SearchBar /> */}
       <GridSearchBar />
-      <DrawingGrid/>
-      {/* <CatalogGrid/> */}
-      {/* <BomGrid/> */}
-      {/* <InventoryGrid/> */}
+      <div style={{ display: "flex" }}>
+        <DrawingGrid />
+        {/* <CatalogGrid/> */}
+        {/* <BomGrid/> */}
+        {/* <InventoryGrid/> */}
+      </div>
     </div>
   );
 }
