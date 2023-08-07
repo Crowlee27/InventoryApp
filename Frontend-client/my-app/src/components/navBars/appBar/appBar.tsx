@@ -103,7 +103,7 @@ export const SearchAppBar = () => {
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
       >
-        <MenuItem component={Link} to="/" onClick={handleMenuClose}>Drawing</MenuItem>
+        <MenuItem component={Link} to="/drawing" onClick={handleMenuClose}>Drawing</MenuItem>
         <MenuItem component={Link} to="/catalog" onClick={handleMenuClose}>Catalog</MenuItem>
         <MenuItem component={Link} to="/bom" onClick={handleMenuClose}>BOM</MenuItem>
         <MenuItem component={Link} to="/inventory" onClick={handleMenuClose}>Inventory</MenuItem>
