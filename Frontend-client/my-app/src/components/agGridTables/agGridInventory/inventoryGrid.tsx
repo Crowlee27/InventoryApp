@@ -85,6 +85,7 @@ export const InventoryGrid = () => {
       filter: true,
       editable: true,
       flex: 1,
+      suppressMovable: true,
       filterParams: {
         buttons: ["apply", "reset"],
       },

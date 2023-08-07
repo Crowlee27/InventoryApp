@@ -59,6 +59,7 @@ export const BomGrid = () => {
       filter: true,
       editable: true,
       flex: 1,
+      suppressMovable: true,
       filterParams: {
         buttons: ["apply", "reset"],
       },
