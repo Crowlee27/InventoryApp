@@ -1,7 +1,7 @@
 import React, { ReactElement } from "react";
 import Button from "@mui/material/Button";
 
-export const DeleteButton = (props: IDeleteButton): ReactElement => {
+export const SearchButton = (props: ISearchButton): ReactElement => {
   const { onClick } = props;
 
   const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -13,9 +13,9 @@ export const DeleteButton = (props: IDeleteButton): ReactElement => {
       variant="contained"
       color="primary"
       onClick={handleButtonClick}
-      className="deleteButton"
+      className="searchButton"
     >
-      Delete
+      Search
     </Button>
   );
 };

@@ -1,7 +1,7 @@
 import React, { ReactElement } from "react";
 import Button from "@mui/material/Button";
 
-export const DeleteButton = (props: IDeleteButton): ReactElement => {
+export const ResetButton = (props: IResetButton): ReactElement => {
   const { onClick } = props;
 
   const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -10,12 +10,12 @@ export const DeleteButton = (props: IDeleteButton): ReactElement => {
 
   return (
     <Button
-      variant="contained"
+      variant="outlined"
       color="primary"
       onClick={handleButtonClick}
-      className="deleteButton"
+      className="resetButton"
     >
-      Delete
+      Reset
     </Button>
   );
 };
