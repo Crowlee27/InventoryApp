@@ -1,3 +1,5 @@
+import React from "react";
+
 export {};
 
 declare global {
@@ -5,6 +7,7 @@ declare global {
     name: string;
     label: string;
     id: string;
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
   }
 
   interface ITextFieldsProps {
@@ -16,48 +19,62 @@ declare global {
     name: string;
     id: string;
     value: string;
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   }
 
   interface IDrawingGridRow {
-    ID: number;
-    Number: string;
-    Description: string;
+    id: number;
+    number: string;
+    description: string;
   }
 
   interface ICatalogGridRow {
-    ID: number;
-    Description: string;
-    Size: string;
-    Length: string;
-    Rating: string;
-    Serial: string;
+    id: number;
+    description: string;
+    size: string;
+    length: string;
+    rating: string;
+    serial: string;
   }
 
   interface IBomGridRow {
-    ID: number;
-    Drawing: number;
-    Catalog: number;
-    Tag: string;
-    Alias: string;
+    id: number;
+    drawing: number;
+    catalog: number;
+    tag: string;
+    alias: string;
   }
 
   interface IInventoryGridRow {
-    ID: number;
-    Bom: number;
-    Purchased: number;
-    Received: number;
-    Outstanding?: number;
-    Issued: number;
-    Remaining: number;
+    id: number;
+    bom: number;
+    purchased: number;
+    received: number;
+    outstanding?: number;
+    issued: number;
+    remaining: number;
   }
 
   interface IDeleteButton {
-    onClick: () => void;
+    onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
   }
 
   interface IDeleteConfirmationDialog {
     open: boolean;
-    onClose: () => void;
-    onConfirm: () => void;
+    onClose: (event: React.MouseEvent<HTMLButtonElement>) => void;
+    onConfirm: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  }
+
+  interface IResetButton {
+    onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  }
+
+  interface ISearchButton{
+    onClick: (event:React.MouseEvent<HTMLButtonElement>) => void;
+  }
+
+  interface ISearchFilter {
+    filterValue: string;
+    onFilterChange: (value: string) => void;
   }
 }
