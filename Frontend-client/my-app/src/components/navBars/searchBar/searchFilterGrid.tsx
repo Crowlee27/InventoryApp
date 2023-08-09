@@ -1,13 +1,15 @@
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, ReactElement } from "react";
 import TextField from "@mui/material/TextField";
+import { useLocation } from "react-router-dom";
 
-interface ISearchFilter {
-  filterValue: string;
-  onFilterChange: (value: string) => void;
-}
-
-export const SearchFilter = (props: ISearchFilter) => {
+export const SearchFilter = (props: ISearchFilter): ReactElement => {
   const { filterValue, onFilterChange } = props;
+
+  const location = useLocation();
+  let pageName = location.pathname.substring(1);
+  if (pageName === "bom") {
+    pageName = "BOM";
+  } else pageName = pageName.charAt(0).toUpperCase() + pageName.slice(1);
 
   const handleFilterChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
@@ -17,7 +19,7 @@ export const SearchFilter = (props: ISearchFilter) => {
   return (
     <div>
       <TextField
-        label="Search"
+        label={`Search ${pageName}`}
         value={filterValue}
         onChange={handleFilterChange}
         id="search"
@@ -25,7 +27,6 @@ export const SearchFilter = (props: ISearchFilter) => {
         variant="outlined"
         size="small"
       />
-      
     </div>
   );
 };
