@@ -13,7 +13,7 @@ export const DrawingDescSelect = (props: ISelectField) => {
     value = "",
   } = props;
 
-  const [description, setDescription] = React.useState("");
+  const [description, setDescription] = React.useState(value);
 
   const handleChange = (event: SelectChangeEvent) => {
     setDescription(event.target.value as string);
@@ -26,7 +26,7 @@ export const DrawingDescSelect = (props: ISelectField) => {
         <Select
           labelId={`${name}-id`}
           id={`${id}-id-select`}
-          value={value}
+          value={description}
           label={label}
           onChange={handleChange}
         >
