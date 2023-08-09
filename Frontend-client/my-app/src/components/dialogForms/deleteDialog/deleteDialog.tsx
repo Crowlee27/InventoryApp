@@ -9,9 +9,9 @@ import Button from "@mui/material/Button";
 export const DeleteConfirmationDialog = (props: IDeleteConfirmationDialog) => {
   const { open, onClose, onConfirm } = props;
 
-  const handleConfirm = () => {
-    onConfirm();
-    onClose();
+  const handleConfirm = (event: React.MouseEvent<HTMLButtonElement>) => {
+    onConfirm(event);
+    onClose(event);
   };
 
   return (
