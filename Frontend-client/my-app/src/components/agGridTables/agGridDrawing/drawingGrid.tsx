@@ -6,8 +6,9 @@ import "ag-grid-community/styles/ag-theme-alpine.css";
 import { DeleteButton } from "../../specialButtons/deleteButton";
 import { DeleteConfirmationDialog } from "../../dialogForms/deleteDialog/deleteDialog";
 import { SearchFilter } from "../../navBars/searchBar/searchFilterGrid";
-import { Button } from "@mui/material";
 import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDialog";
+import { ResetButton } from "../../specialButtons/resetButton";
+import { SearchButton } from "../../specialButtons/searchButton";
 
 export const DrawingGrid = () => {
   const [rowData, setRowData] = useState([
@@ -55,7 +56,7 @@ export const DrawingGrid = () => {
   const defaultColDef = useMemo(
     () => ({
       sortable: true,
-      filter: "true",
+      filter: true,
       editable: true,
       flex: 1,
       suppressMovable: true,
@@ -80,15 +81,13 @@ export const DrawingGrid = () => {
     }
   };
 
-  const handleReset = () => { 
-    setFilterValue("")
-  }
+  const handleReset = () => {
+    gridApiRef.current?.setQuickFilter("");
+    setFilterValue("");
+  };
 
   return (
-    <div
-      className="ag-theme-alpine"
-      style={{ height: "100vh", width: "100vw" }}
-    >
+    <div className="ag-theme-alpine">
       <div className="gridSearchBar">
         <div className="searchBar">
           <DeleteButton onClick={handleDeleteRows} />
@@ -101,15 +100,8 @@ export const DrawingGrid = () => {
             filterValue={filterValue}
             onFilterChange={setFilterValue}
           />
-          <Button
-            variant="contained"
-            color="primary"
-            className="searchButton"
-            onClick={filterData}
-          >
-            Search
-          </Button>
-          <Button variant="outlined" className="resetButton" onClick={handleReset}>Reset</Button>
+          <SearchButton onClick={filterData} />
+          <ResetButton onClick={handleReset} />
         </div>
         <div>
           <AddDrawingsForm />

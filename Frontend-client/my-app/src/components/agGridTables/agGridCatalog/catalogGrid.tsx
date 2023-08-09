@@ -1,10 +1,14 @@
 import React, { useMemo, useState } from "react";
-import { ColDef } from "ag-grid-community";
+import { ColDef, GridApi } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import { DeleteButton } from "../../specialButtons/deleteButton";
 import { DeleteConfirmationDialog } from "../../dialogForms/deleteDialog/deleteDialog";
+import { SearchFilter } from "../../navBars/searchBar/searchFilterGrid";
+import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDialog";
+import { ResetButton } from "../../specialButtons/resetButton";
+import { SearchButton } from "../../specialButtons/searchButton";
 
 export const CatalogGrid = () => {
   const [rowData, setRowData] = useState([
@@ -103,23 +107,56 @@ export const CatalogGrid = () => {
     []
   );
 
+  const [filterValue, setFilterValue] = React.useState("");
+
+  const gridApiRef = React.useRef<GridApi | null>(null);
+
+  const onGridReady = (params: { api: any }) => {
+    gridApiRef.current = params.api;
+  };
+
+  const filterData = () => {
+    if (gridApiRef.current) {
+      gridApiRef.current.setQuickFilter(filterValue);
+    }
+  };
+
+  const handleReset = () => {
+    gridApiRef.current?.setQuickFilter("");
+    setFilterValue("");
+  };
+
   return (
     <div
       className="ag-theme-alpine"
-      style={{ height: "100vh", width: "100vw" }}
     >
-      <DeleteButton onClick={handleDeleteRows} />
-      <DeleteConfirmationDialog
-        open={showConfirmation}
-        onClose={() => setShowConfirmation(false)}
-        onConfirm={handleConfirmDelete}
-      />
+      <div className="gridSearchBar">
+        <div className="searchBar">
+          <DeleteButton onClick={handleDeleteRows} />
+          <DeleteConfirmationDialog
+            open={showConfirmation}
+            onClose={() => setShowConfirmation(false)}
+            onConfirm={handleConfirmDelete}
+          />
+          <SearchFilter
+            filterValue={filterValue}
+            onFilterChange={setFilterValue}
+          />
+          <SearchButton onClick={filterData} />
+          <ResetButton onClick={handleReset} />
+        </div>
+        <div>
+          <AddDrawingsForm />
+        </div>
+      </div>
+
       <AgGridReact
         rowData={rowData}
         columnDefs={columnDefs}
         defaultColDef={defaultColDef}
         rowSelection="multiple"
         ref={gridRef}
+        onGridReady={onGridReady}
       />
     </div>
   );
