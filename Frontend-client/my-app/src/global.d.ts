@@ -7,7 +7,7 @@ declare global {
     name: string;
     label: string;
     id: string;
-    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   }
 
   interface ITextFieldsProps {
@@ -69,12 +69,44 @@ declare global {
     onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
   }
 
-  interface ISearchButton{
-    onClick: (event:React.MouseEvent<HTMLButtonElement>) => void;
+  interface ISearchButton {
+    onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
   }
 
   interface ISearchFilter {
     filterValue: string;
     onFilterChange: (value: string) => void;
+    onKeyPress: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+  }
+
+  interface IDefaultColDef {
+    sortable: boolean;
+    filter: boolean;
+    editable: boolean;
+    flex: number;
+    suppressMovable: boolean;
+    filterParams: {
+      buttons: string[];
+    };
+  }
+
+interface IDrawingGrid {
+  rowData: IDrawingGridRow[];
+  columnDefs: ColDef[];
+}
+
+  interface ICatalogGrid {
+    rowData: ICatalogGridRow[];
+    columnDefs: ColDef[];
+  }
+
+  interface IBomGrid {
+    rowData: IBomGridRow[];
+    columnDefs: ColDef[];
+  }
+
+  interface IInventoryGrid {
+    rowData: IInventoryGridRow[];
+    columnDefs: ColDef[];
   }
 }
