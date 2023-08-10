@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from "react";
-import { ColDef,GridApi } from "ag-grid-community";
+import React, { useMemo, useState, useCallback } from "react";
+import { ColDef, GridApi, GridReadyEvent } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
@@ -10,54 +10,63 @@ import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDi
 import { ResetButton } from "../../specialButtons/resetButton";
 import { SearchButton } from "../../specialButtons/searchButton";
 
-export const BomGrid = () => {
-  const [rowData, setRowData] = useState([
-    { ID: 1, Drawing: 1, Catalog: 1, Tag: "10-AA-150-1", Alias: "" },
-    { ID: 2, Drawing: 1, Catalog: 2, Tag: "10-AA-150-2", Alias: "" },
-    { ID: 3, Drawing: 1, Catalog: 3, Tag: "9ACCW2", Alias: "" },
-    { ID: 4, Drawing: 1, Catalog: 4, Tag: "7SPWG1", Alias: "7SPWG2" },
-    { ID: 5, Drawing: 1, Catalog: 5, Tag: "9AJJDB2", Alias: "9AJJDB3" },
-  ]);
+interface IBomGrid {
+  rowData: IBomGridRow[];
+  columnDefs: ColDef[];
+}
+
+export const BomGrid = (props: IBomGrid) => {
+  const [rowData, setRowData] = useState<IBomGridRow[]>([
+    { id: 1, drawing: 1, catalog: 1, tag: "10-AA-150-1", alias: "" },
+    { id: 2, drawing: 1, catalog: 2, tag: "10-AA-150-2", alias: "" },
+    { id: 3, drawing: 1, catalog: 3, tag: "9ACCW2", alias: "" },
+    { id: 4, drawing: 1, catalog: 4, tag: "7SPWG1", alias: "7SPWG2" },
+    { id: 5, drawing: 1, catalog: 5, tag: "9AJJDB2", alias: "9AJJDB3" },
+  ] as IBomGridRow[]);
 
   const [columnDefs, setColumnDefs] = useState<ColDef[]>([
     {
-      field: "ID",
+      field: "id",
       checkboxSelection: true,
       headerCheckboxSelection: true,
       editable: false,
       pinned: "left",
       width: 100,
     },
-    { field: "Drawing" },
-    { field: "Catalog" },
-    { field: "Tag" },
-    { field: "Alias" },
+    { field: "drawing" },
+    { field: "catalog" },
+    { field: "tag" },
+    { field: "alias" },
   ]);
 
   const [showConfirmation, setShowConfirmation] = useState(false);
 
-  const gridRef = React.createRef<AgGridReact>();
+  const [selectedRows, setSelectedRows] = useState<IBomGridRow[]>([]);
 
-  const handleDeleteRows = () => {
-    const selectedRowData = gridRef?.current?.api?.getSelectedRows();
-    if (selectedRowData && selectedRowData.length > 0) {
+  const handleRowSelected = useCallback((event: GridReadyEvent) => {
+    setSelectedRows(event.api.getSelectedNodes().map((node) => node.data));
+  }, []);
+
+  const handleDeleteRows = (selectedRows: IBomGridRow[]) => {
+    if (selectedRows.length > 0) {
       setShowConfirmation(true);
-    } else setShowConfirmation(false);
+    } else {
+      setShowConfirmation(false);
+    }
   };
 
-  const handleConfirmDelete = () => {
-    const selectedRowData = gridRef?.current?.api?.getSelectedRows();
-    if (selectedRowData) {
-      const selectedRowDatas = selectedRowData.map((row) => row.data);
+  const handleConfirmDelete = (selectedRows: IBomGridRow[]) => {
+    if (selectedRows.length > 0) {
       const updatedRowData = rowData.filter(
-        (row) => !selectedRowData.includes(row)
+        (row) => !selectedRows.includes(row)
       );
       setRowData(updatedRowData);
+      setSelectedRows([]);
     }
     setShowConfirmation(false);
   };
 
-  const defaultColDef = useMemo(
+  const defaultColDef = useMemo<IDefaultColDef>(
     () => ({
       sortable: true,
       filter: true,
@@ -71,55 +80,53 @@ export const BomGrid = () => {
     []
   );
 
-   const [filterValue, setFilterValue] = React.useState("");
+  const [filterValue, setFilterValue] = useState("");
 
-   const gridApiRef = React.useRef<GridApi | null>(null);
+  const gridApiRef = React.useRef<GridApi | null>(null);
 
-   const onGridReady = (params: { api: any }) => {
-     gridApiRef.current = params.api;
-   };
+  const onGridReady = useCallback((event: GridReadyEvent) => {
+    gridApiRef.current = event.api;
+  }, []);
 
-   const filterData = () => {
-     if (gridApiRef.current) {
-       gridApiRef.current.setQuickFilter(filterValue);
-     }
-   };
+  const filterData = (value: string) => {
+    if (gridApiRef.current) {
+      gridApiRef.current.setQuickFilter(value);
+    }
+  };
 
-   const handleReset = () => {
-     gridApiRef.current?.setQuickFilter("");
-     setFilterValue("");
-   };
+  const handleReset = (value: string) => {
+    gridApiRef.current?.setQuickFilter("");
+    setFilterValue("");
+  };
 
   return (
-    <div
-      className="ag-theme-alpine"
-    >
+    <div className="ag-theme-alpine">
       <div className="gridSearchBar">
         <div className="searchBar">
-          <DeleteButton onClick={handleDeleteRows} />
+          <DeleteButton onClick={() => handleDeleteRows(selectedRows)} />
           <DeleteConfirmationDialog
             open={showConfirmation}
             onClose={() => setShowConfirmation(false)}
-            onConfirm={handleConfirmDelete}
+            onConfirm={() => handleConfirmDelete(selectedRows)}
           />
           <SearchFilter
             filterValue={filterValue}
             onFilterChange={setFilterValue}
+            onKeyPress={() => filterData(filterValue)}
           />
-          <SearchButton onClick={filterData} />
-          <ResetButton onClick={handleReset} />
+          <SearchButton onClick={() => filterData(filterValue)} />
+          <ResetButton onClick={() => handleReset("")} />
         </div>
         <div>
           <AddDrawingsForm />
         </div>
       </div>
-
       <AgGridReact
+        onRowSelected={handleRowSelected}
         rowData={rowData}
         columnDefs={columnDefs}
         defaultColDef={defaultColDef}
         rowSelection="multiple"
-        ref={gridRef}
         onGridReady={onGridReady}
       />
     </div>

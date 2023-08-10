@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from "react";
-import { ColDef, GridApi } from "ag-grid-community";
+import React, { useMemo, useState, useCallback } from "react";
+import { ColDef, GridApi, GridReadyEvent } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
@@ -10,80 +10,89 @@ import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDi
 import { ResetButton } from "../../specialButtons/resetButton";
 import { SearchButton } from "../../specialButtons/searchButton";
 
-export const InventoryGrid = () => {
-  const [rowData, setRowData] = useState([
-    { ID: 1, Bom: 1, Purchased: 1, Received: 1, Issued: 1, Remaining: 0 },
-    { ID: 2, Bom: 2, Purchased: 1, Received: 1, Issued: 1, Remaining: 0 },
+interface IInventoryGrid {
+  rowData: IInventoryGridRow[];
+  columnDefs: ColDef[];
+}
+
+export const InventoryGrid = (props: IInventoryGrid) => {
+  const [rowData, setRowData] = useState<IInventoryGridRow[]>([
+    { id: 1, bom: 1, purchased: 1, received: 1, issued: 1, remaining: 0 },
+    { id: 2, bom: 2, purchased: 1, received: 1, issued: 1, remaining: 0 },
     {
-      ID: 3,
-      Bom: 3,
-      Purchased: 4,
-      Received: 2,
-      Outstanding: 2,
-      Issued: 1,
-      Remaining: 0,
+      id: 3,
+      bom: 3,
+      purchased: 4,
+      received: 2,
+      outstanding: 2,
+      issued: 1,
+      remaining: 0,
     },
     {
-      ID: 4,
-      Bom: 4,
-      Purchased: 100,
-      Received: 73,
-      Outstanding: 27,
-      Issued: 0,
-      Remaining: 2,
+      id: 4,
+      bom: 4,
+      purchased: 100,
+      received: 73,
+      outstanding: 27,
+      issued: 0,
+      remaining: 2,
     },
     {
-      ID: 5,
-      Bom: 5,
-      Purchased: 500,
-      Received: 291,
-      Outstanding: 208,
-      Issued: 16,
-      Remaining: 0,
+      id: 5,
+      bom: 5,
+      purchased: 500,
+      received: 291,
+      outstanding: 208,
+      issued: 16,
+      remaining: 0,
     },
-  ]);
+  ] as IInventoryGridRow[]);
 
   const [columnDefs, setColumnDefs] = useState<ColDef[]>([
     {
-      field: "ID",
+      field: "id",
       checkboxSelection: true,
       headerCheckboxSelection: true,
       editable: false,
       pinned: "left",
       width: 100,
     },
-    { field: "Bom" },
-    { field: "Purchased" },
-    { field: "Received" },
-    { field: "Outstanding" },
-    { field: "Issued" },
-    { field: "Remaining" },
+    { field: "bom" },
+    { field: "purchased" },
+    { field: "received" },
+    { field: "outstanding" },
+    { field: "issued" },
+    { field: "remaining" },
   ]);
 
   const [showConfirmation, setShowConfirmation] = useState(false);
 
-  const gridRef = React.createRef<AgGridReact>();
+  const [selectedRows, setSelectedRows] = useState<IInventoryGridRow[]>([]);
 
-  const handleDeleteRows = () => {
-    const selectedRowData = gridRef?.current?.api?.getSelectedRows();
-    if (selectedRowData && selectedRowData.length > 0) {
+  const handleRowSelected = useCallback((event: GridReadyEvent) => {
+    setSelectedRows(event.api.getSelectedNodes().map((node) => node.data));
+  }, []);
+
+  const handleDeleteRows = (selectedRows: IInventoryGridRow[]) => {
+    if (selectedRows.length > 0) {
       setShowConfirmation(true);
-    } else setShowConfirmation(false);
+    } else {
+      setShowConfirmation(false);
+    }
   };
 
-  const handleConfirmDelete = () => {
-    const selectedRowData = gridRef?.current?.api?.getSelectedRows();
-    if (selectedRowData) {
-      const selectedRowDatas = selectedRowData.map((row) => row.data);
+  const handleConfirmDelete = (selectedRows: IInventoryGridRow[]) => {
+    if (selectedRows.length > 0) {
       const updatedRowData = rowData.filter(
-        (row) => !selectedRowData.includes(row)
+        (row) => !selectedRows.includes(row)
       );
       setRowData(updatedRowData);
+      setSelectedRows([]);
     }
     setShowConfirmation(false);
   };
 
-  const defaultColDef = useMemo(
+  const defaultColDef = useMemo<IDefaultColDef>(
     () => ({
       sortable: true,
       filter: true,
@@ -97,43 +106,43 @@ export const InventoryGrid = () => {
     []
   );
 
-  const [filterValue, setFilterValue] = React.useState("");
+  const [filterValue, setFilterValue] = useState("");
 
   const gridApiRef = React.useRef<GridApi | null>(null);
 
-  const onGridReady = (params: { api: any }) => {
-    gridApiRef.current = params.api;
-  };
+  const onGridReady = useCallback((event: GridReadyEvent) => {
+    gridApiRef.current = event.api;
+  }, []);
 
-  const filterData = () => {
+  const filterData = (value: string) => {
     if (gridApiRef.current) {
-      gridApiRef.current.setQuickFilter(filterValue);
+      gridApiRef.current.setQuickFilter(value);
     }
   };
 
-  const handleReset = () => {
+  const handleReset = (value: string) => {
     gridApiRef.current?.setQuickFilter("");
     setFilterValue("");
   };
 
   return (
-    <div
-      className="ag-theme-alpine"
-    >
+    <div className="ag-theme-alpine">
       <div className="gridSearchBar">
         <div className="searchBar">
-          <DeleteButton onClick={handleDeleteRows} />
+          <DeleteButton onClick={() => handleDeleteRows(selectedRows)} />
+
           <DeleteConfirmationDialog
             open={showConfirmation}
             onClose={() => setShowConfirmation(false)}
-            onConfirm={handleConfirmDelete}
+            onConfirm={() => handleConfirmDelete(selectedRows)}
           />
           <SearchFilter
             filterValue={filterValue}
             onFilterChange={setFilterValue}
+            onKeyPress={() => filterData(filterValue)}
           />
-          <SearchButton onClick={filterData} />
-          <ResetButton onClick={handleReset} />
+          <SearchButton onClick={() => filterData(filterValue)} />
+          <ResetButton onClick={() => handleReset("")} />
         </div>
         <div>
           <AddDrawingsForm />
@@ -141,11 +150,11 @@ export const InventoryGrid = () => {
       </div>
 
       <AgGridReact
+        onRowSelected={handleRowSelected}
         rowData={rowData}
         columnDefs={columnDefs}
         defaultColDef={defaultColDef}
         rowSelection="multiple"
-        ref={gridRef}
         onGridReady={onGridReady}
       />
     </div>

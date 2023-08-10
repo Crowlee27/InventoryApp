@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from "react";
-import { ColDef, GridApi } from "ag-grid-community";
+import React, { useMemo, useState, useCallback } from "react";
+import { ColDef, GridApi, GridReadyEvent } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
@@ -10,90 +10,99 @@ import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDi
 import { ResetButton } from "../../specialButtons/resetButton";
 import { SearchButton } from "../../specialButtons/searchButton";
 
-export const CatalogGrid = () => {
-  const [rowData, setRowData] = useState([
+interface ICatalogGrid { 
+  rowData: ICatalogGridRow[];
+  columnDefs: ColDef[];
+}
+
+export const CatalogGrid = (props: ICatalogGrid) => {
+  const [rowData, setRowData] = useState<ICatalogGridRow[]>([
     {
-      ID: 1,
-      Description: "Pipe Spool",
-      Size: `10"`,
-      Length: `20'`,
-      Rating: "",
-      Serial: "OVVXX2RQ",
+      id: 1,
+      description: "Pipe Spool",
+      size: `10"`,
+      length: `20'`,
+      rating: "",
+      serial: "OVVXX2RQ",
     },
     {
-      ID: 2,
-      Description: "Pipe Spool",
-      Size: `10"`,
-      Length: `20'`,
-      Rating: "",
-      Serial: "PZDWVXMQ",
+      id: 2,
+      description: "Pipe Spool",
+      size: `10"`,
+      length: `20'`,
+      rating: "",
+      serial: "PZDWVXMQ",
     },
     {
-      ID: 3,
-      Description: "Gate Valve",
-      Size: "10#",
-      Length: "",
-      Rating: "150#",
-      Serial: "4G7DA4JP",
+      id: 3,
+      description: "Gate Valve",
+      size: "10#",
+      length: "",
+      rating: "150#",
+      serial: "4G7DA4JP",
     },
     {
-      ID: 4,
-      Description: "Gasket - Spiral wound",
-      Size: `10"`,
-      Length: "",
-      Rating: "150#",
-      Serial: "EVRH3Z9R",
+      id: 4,
+      description: "Gasket - Spiral wound",
+      size: `10"`,
+      length: "",
+      rating: "150#",
+      serial: "EVRH3Z9R",
     },
     {
-      ID: 5,
-      Description: "A193 CR B7 Stud Bolt",
-      Size: `3/4 x 5"`,
-      Length: "",
-      Rating: "150#",
-      Serial: "128SKFSN",
+      id: 5,
+      description: "A193 CR B7 Stud Bolt",
+      size: `3/4 x 5"`,
+      length: "",
+      rating: "150#",
+      serial: "128SKFSN",
     },
-  ]);
+  ] as ICatalogGridRow[]);
 
   const [columnDefs, setColumnDefs] = useState<ColDef[]>([
     {
-      field: "ID",
+      field: "id",
       checkboxSelection: true,
       headerCheckboxSelection: true,
       editable: false,
       pinned: "left",
       width: 100,
     },
-    { field: "Description" },
-    { field: "Size" },
-    { field: "Length" },
-    { field: "Rating" },
-    { field: "Serial" },
+    { field: "description" },
+    { field: "size" },
+    { field: "length" },
+    { field: "rating" },
+    { field: "serial" },
   ]);
 
   const [showConfirmation, setShowConfirmation] = useState(false);
 
-  const gridRef = React.createRef<AgGridReact>();
+  const [selectedRows, setSelectedRows] = useState<ICatalogGridRow[]>([]);
 
-  const handleDeleteRows = () => {
-    const selectedRowData = gridRef?.current?.api?.getSelectedRows();
-    if (selectedRowData && selectedRowData.length > 0) {
+const handleRowSelected = useCallback((event: GridReadyEvent) => {
+  setSelectedRows(event.api.getSelectedNodes().map((node) => node.data));
+}, []);
+
+  const handleDeleteRows = (selectedRows: ICatalogGridRow[]) => {
+    if (selectedRows.length > 0) {
       setShowConfirmation(true);
-    } else setShowConfirmation(false);
+    } else {
+      setShowConfirmation(false);
+    }
   };
 
-  const handleConfirmDelete = () => {
-    const selectedRowData = gridRef?.current?.api?.getSelectedRows();
-    if (selectedRowData) {
-      const selectedRowDatas = selectedRowData.map((row) => row.data);
+  const handleConfirmDelete = (selectedRows: ICatalogGridRow[]) => {
+    if (selectedRows.length > 0) {
       const updatedRowData = rowData.filter(
-        (row) => !selectedRowData.includes(row)
+        (row) => !selectedRows.includes(row)
       );
       setRowData(updatedRowData);
+      setSelectedRows([]);
     }
     setShowConfirmation(false);
   };
 
-  const defaultColDef = useMemo(
+  const defaultColDef = useMemo<IDefaultColDef>(
     () => ({
       sortable: true,
       filter: true,
@@ -107,43 +116,43 @@ export const CatalogGrid = () => {
     []
   );
 
-  const [filterValue, setFilterValue] = React.useState("");
+  const [filterValue, setFilterValue] = useState("");
 
   const gridApiRef = React.useRef<GridApi | null>(null);
 
-  const onGridReady = (params: { api: any }) => {
-    gridApiRef.current = params.api;
-  };
+  const onGridReady = useCallback((event: GridReadyEvent) => {
+    gridApiRef.current = event.api;
+  }, []);
 
-  const filterData = () => {
+  const filterData = (value: string) => {
     if (gridApiRef.current) {
-      gridApiRef.current.setQuickFilter(filterValue);
+      gridApiRef.current.setQuickFilter(value);
     }
   };
 
-  const handleReset = () => {
+  const handleReset = (value: string) => {
     gridApiRef.current?.setQuickFilter("");
     setFilterValue("");
   };
 
   return (
-    <div
-      className="ag-theme-alpine"
-    >
+    <div className="ag-theme-alpine">
       <div className="gridSearchBar">
         <div className="searchBar">
-          <DeleteButton onClick={handleDeleteRows} />
+          <DeleteButton onClick={() => handleDeleteRows(selectedRows)} />
+
           <DeleteConfirmationDialog
             open={showConfirmation}
             onClose={() => setShowConfirmation(false)}
-            onConfirm={handleConfirmDelete}
+            onConfirm={() => handleConfirmDelete(selectedRows)}
           />
           <SearchFilter
             filterValue={filterValue}
             onFilterChange={setFilterValue}
+            onKeyPress={() => filterData(filterValue)}
           />
-          <SearchButton onClick={filterData} />
-          <ResetButton onClick={handleReset} />
+          <SearchButton onClick={() => filterData(filterValue)} />
+          <ResetButton onClick={() => handleReset("")} />
         </div>
         <div>
           <AddDrawingsForm />
@@ -151,11 +160,11 @@ export const CatalogGrid = () => {
       </div>
 
       <AgGridReact
+        onRowSelected={handleRowSelected}
         rowData={rowData}
         columnDefs={columnDefs}
         defaultColDef={defaultColDef}
         rowSelection="multiple"
-        ref={gridRef}
         onGridReady={onGridReady}
       />
     </div>

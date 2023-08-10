@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from "react";
-import { ColDef, GridApi } from "ag-grid-community";
+import React, { useMemo, useState, useCallback } from "react";
+import { ColDef, GridApi, GridReadyEvent } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
@@ -10,50 +10,63 @@ import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDi
 import { ResetButton } from "../../specialButtons/resetButton";
 import { SearchButton } from "../../specialButtons/searchButton";
 
-export const DrawingGrid = () => {
-  const [rowData, setRowData] = useState([
-    { ID: 1, Number: "ISO-100-AA", Description: "Piping ISO" },
-    { ID: 2, Number: "ISO-101--AA", Description: "Piping ISO" },
-    { ID: 3, Number: "ISO-102--AA", Description: "Piping ISO" },
-  ]);
+interface IDrawingGrid {
+  rowData: IDrawingGridRow[];
+  columnDefs: ColDef[];
+}
+
+export const DrawingGrid = (props: IDrawingGrid) => {
+  const [rowData, setRowData] = useState<IDrawingGridRow[]>([
+    { id: 1, number: "ISO-100-AA", description: "Piping ISO" },
+    { id: 2, number: "ISO-101--AA", description: "Piping ISO" },
+    { id: 3, number: "ISO-102--AA", description: "Piping ISO" },
+  ] as IDrawingGridRow[]);
 
   const [columnDefs, setColumnDefs] = useState<ColDef[]>([
     {
-      field: "ID",
+      field: "id",
       checkboxSelection: true,
       headerCheckboxSelection: true,
       editable: false,
       pinned: "left",
       width: 100,
     },
-    { field: "Number" },
-    { field: "Description" },
+    {
+      field: "number",
+    },
+    {
+      field: "description",
+    },
   ]);
 
   const [showConfirmation, setShowConfirmation] = useState(false);
 
-  const gridRef = React.createRef<AgGridReact>();
+  const [selectedRows, setSelectedRows] = useState<IDrawingGridRow[]>([]);
 
-  const handleDeleteRows = () => {
-    const selectedRowData = gridRef?.current?.api?.getSelectedRows();
-    if (selectedRowData && selectedRowData.length > 0) {
+  const handleRowSelected = useCallback((event: GridReadyEvent) => {
+    setSelectedRows(event.api.getSelectedNodes().map((node) => node.data));
+  }, []);
+
+  const handleDeleteRows = (selectedRows: IDrawingGridRow[]) => {
+    if (selectedRows.length > 0) {
       setShowConfirmation(true);
-    } else setShowConfirmation(false);
+    } else {
+      setShowConfirmation(false);
+    }
   };
 
-  const handleConfirmDelete = () => {
-    const selectedRowData = gridRef?.current?.api?.getSelectedRows();
-    if (selectedRowData) {
-      const selectedRowDatas = selectedRowData.map((row) => row.data);
+  const handleConfirmDelete = (selectedRows: IDrawingGridRow[]) => {
+    if (selectedRows.length > 0) {
       const updatedRowData = rowData.filter(
-        (row) => !selectedRowData.includes(row)
+        (row) => !selectedRows.includes(row)
       );
       setRowData(updatedRowData);
+      setSelectedRows([]);
     }
     setShowConfirmation(false);
   };
 
-  const defaultColDef = useMemo(
+  const defaultColDef = useMemo<IDefaultColDef>(
     () => ({
       sortable: true,
       filter: true,
@@ -67,21 +80,21 @@ export const DrawingGrid = () => {
     []
   );
 
-  const [filterValue, setFilterValue] = React.useState("");
+  const [filterValue, setFilterValue] = useState("");
 
   const gridApiRef = React.useRef<GridApi | null>(null);
 
-  const onGridReady = (params: { api: any }) => {
-    gridApiRef.current = params.api;
-  };
+  const onGridReady = useCallback((event: GridReadyEvent) => {
+    gridApiRef.current = event.api;
+  }, []);
 
-  const filterData = () => {
+  const filterData = (value: string) => {
     if (gridApiRef.current) {
-      gridApiRef.current.setQuickFilter(filterValue);
+      gridApiRef.current.setQuickFilter(value);
     }
   };
 
-  const handleReset = () => {
+  const handleReset = (value: string) => {
     gridApiRef.current?.setQuickFilter("");
     setFilterValue("");
   };
@@ -90,18 +103,19 @@ export const DrawingGrid = () => {
     <div className="ag-theme-alpine">
       <div className="gridSearchBar">
         <div className="searchBar">
-          <DeleteButton onClick={handleDeleteRows} />
+          <DeleteButton onClick={() => handleDeleteRows(selectedRows)} />
           <DeleteConfirmationDialog
             open={showConfirmation}
             onClose={() => setShowConfirmation(false)}
-            onConfirm={handleConfirmDelete}
+            onConfirm={() => handleConfirmDelete(selectedRows)}
           />
           <SearchFilter
             filterValue={filterValue}
             onFilterChange={setFilterValue}
+            onKeyPress={() => filterData(filterValue)}
           />
-          <SearchButton onClick={filterData} />
-          <ResetButton onClick={handleReset} />
+          <SearchButton onClick={() => filterData(filterValue)} />
+          <ResetButton onClick={() => handleReset("")} />
         </div>
         <div>
           <AddDrawingsForm />
@@ -109,11 +123,11 @@ export const DrawingGrid = () => {
       </div>
 
       <AgGridReact
+        onRowSelected={handleRowSelected}
         rowData={rowData}
         columnDefs={columnDefs}
         defaultColDef={defaultColDef}
         rowSelection="multiple"
-        ref={gridRef}
         onGridReady={onGridReady}
       />
     </div>
