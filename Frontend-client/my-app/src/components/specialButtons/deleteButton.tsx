@@ -1,7 +1,7 @@
-import React, { ReactElement } from "react";
+import React from "react";
 import Button from "@mui/material/Button";
 
-export const DeleteButton = (props: IDeleteButton): ReactElement => {
+export const DeleteButton = (props: IDeleteButton) => {
   const { onClick } = props;
 
   const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
