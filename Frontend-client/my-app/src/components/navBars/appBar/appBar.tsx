@@ -54,9 +54,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export const SearchAppBar = () => {
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement| null>(null);
 
-  const handleMenuOpen = (event: any) => {
+  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
