@@ -8,6 +8,7 @@ declare global {
     label: string;
     id: string;
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    value?: string;
   }
 
   interface ITextFieldsProps {
