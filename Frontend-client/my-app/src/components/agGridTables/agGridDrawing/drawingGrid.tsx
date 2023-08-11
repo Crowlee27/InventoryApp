@@ -10,10 +10,7 @@ import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDi
 import { ResetButton } from "../../specialButtons/resetButton";
 import { SearchButton } from "../../specialButtons/searchButton";
 
-interface IDrawingGrid {
-  rowData: IDrawingGridRow[];
-  columnDefs: ColDef[];
-}
+
 
 export const DrawingGrid = (props: IDrawingGrid) => {
   const [rowData, setRowData] = useState<IDrawingGridRow[]>([

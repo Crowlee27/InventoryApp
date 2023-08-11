@@ -10,10 +10,7 @@ import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDi
 import { ResetButton } from "../../specialButtons/resetButton";
 import { SearchButton } from "../../specialButtons/searchButton";
 
-interface IInventoryGrid {
-  rowData: IInventoryGridRow[];
-  columnDefs: ColDef[];
-}
+
 
 export const InventoryGrid = (props: IInventoryGrid) => {
   const [rowData, setRowData] = useState<IInventoryGridRow[]>([

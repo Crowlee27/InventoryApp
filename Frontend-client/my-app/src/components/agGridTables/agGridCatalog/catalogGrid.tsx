@@ -10,10 +10,7 @@ import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDi
 import { ResetButton } from "../../specialButtons/resetButton";
 import { SearchButton } from "../../specialButtons/searchButton";
 
-interface ICatalogGrid { 
-  rowData: ICatalogGridRow[];
-  columnDefs: ColDef[];
-}
+
 
 export const CatalogGrid = (props: ICatalogGrid) => {
   const [rowData, setRowData] = useState<ICatalogGridRow[]>([

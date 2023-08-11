@@ -10,10 +10,7 @@ import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDi
 import { ResetButton } from "../../specialButtons/resetButton";
 import { SearchButton } from "../../specialButtons/searchButton";
 
-interface IBomGrid {
-  rowData: IBomGridRow[];
-  columnDefs: ColDef[];
-}
+
 
 export const BomGrid = (props: IBomGrid) => {
   const [rowData, setRowData] = useState<IBomGridRow[]>([
