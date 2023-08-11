@@ -2,6 +2,8 @@ import dotenv from "dotenv";
 import express from "express";
 import { postgraphile } from "postgraphile";
 import pkg from "pg";
+import cors from "cors";
+import PgSimplifyInflectorPlugin from "@graphile-contrib/pg-simplify-inflector";
 
 dotenv.config();
 
@@ -21,10 +23,16 @@ pool.query("SELECT NOW()", (err, res) => {
   }
 });
 
+
+app.use(cors());
+
 app.use(
   postgraphile(pool, "public", {
     graphiql: true,
+    enableCors: true,
     enhanceGraphiql: true,
+    allowExplain: true,
+    appendPlugins: [PgSimplifyInflectorPlugin],
   })
 );
 
