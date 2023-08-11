@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useMemo, useState, useCallback, useEffect } from "react";
 import { ColDef, GridApi, GridReadyEvent } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
@@ -9,41 +9,18 @@ import { SearchFilter } from "../../navBars/searchBar/searchFilterGrid";
 import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDialog";
 import { ResetButton } from "../../specialButtons/resetButton";
 import { SearchButton } from "../../specialButtons/searchButton";
-
-
+import { getInventories } from "../../graphQl/queries";
 
 export const InventoryGrid = (props: IInventoryGrid) => {
-  const [rowData, setRowData] = useState<IInventoryGridRow[]>([
-    { id: 1, bom: 1, purchased: 1, received: 1, issued: 1, remaining: 0 },
-    { id: 2, bom: 2, purchased: 1, received: 1, issued: 1, remaining: 0 },
-    {
-      id: 3,
-      bom: 3,
-      purchased: 4,
-      received: 2,
-      outstanding: 2,
-      issued: 1,
-      remaining: 0,
-    },
-    {
-      id: 4,
-      bom: 4,
-      purchased: 100,
-      received: 73,
-      outstanding: 27,
-      issued: 0,
-      remaining: 2,
-    },
-    {
-      id: 5,
-      bom: 5,
-      purchased: 500,
-      received: 291,
-      outstanding: 208,
-      issued: 16,
-      remaining: 0,
-    },
-  ] as IInventoryGridRow[]);
+  const [rowData, setRowData] = useState<IInventoryGridRow[]>([]);
+  useEffect(() => {
+    getInventories().then((inventory) => {
+      const nodesArray = inventory.nodes;
+      setRowData(nodesArray);
+    });
+  }, []);
+
+  console.log("[InventoryGrid] inventories:", rowData);
 
   const [columnDefs, setColumnDefs] = useState<ColDef[]>([
     {

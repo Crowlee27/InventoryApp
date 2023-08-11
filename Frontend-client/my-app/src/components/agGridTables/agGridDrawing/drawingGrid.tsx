@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useMemo, useState, useCallback, useEffect } from "react";
 import { ColDef, GridApi, GridReadyEvent } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
@@ -9,15 +9,18 @@ import { SearchFilter } from "../../navBars/searchBar/searchFilterGrid";
 import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDialog";
 import { ResetButton } from "../../specialButtons/resetButton";
 import { SearchButton } from "../../specialButtons/searchButton";
-
-
+import { getDrawings } from "../../graphQl/queries";
 
 export const DrawingGrid = (props: IDrawingGrid) => {
-  const [rowData, setRowData] = useState<IDrawingGridRow[]>([
-    { id: 1, number: "ISO-100-AA", description: "Piping ISO" },
-    { id: 2, number: "ISO-101--AA", description: "Piping ISO" },
-    { id: 3, number: "ISO-102--AA", description: "Piping ISO" },
-  ] as IDrawingGridRow[]);
+  const [rowData, setRowData] = useState<IDrawingGridRow[]>([]);
+  useEffect(() => {
+    getDrawings().then((drawings) => {
+      const nodesArray = drawings.nodes;
+      setRowData(nodesArray);
+    });
+  }, []);
+
+  console.log("[DrawingGrid] drawings:", rowData);
 
   const [columnDefs, setColumnDefs] = useState<ColDef[]>([
     {

@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useMemo, useState, useCallback, useEffect } from "react";
 import { ColDef, GridApi, GridReadyEvent } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
@@ -9,52 +9,18 @@ import { SearchFilter } from "../../navBars/searchBar/searchFilterGrid";
 import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDialog";
 import { ResetButton } from "../../specialButtons/resetButton";
 import { SearchButton } from "../../specialButtons/searchButton";
-
-
+import { getCatalogs } from "../../graphQl/queries";
 
 export const CatalogGrid = (props: ICatalogGrid) => {
-  const [rowData, setRowData] = useState<ICatalogGridRow[]>([
-    {
-      id: 1,
-      description: "Pipe Spool",
-      size: `10"`,
-      length: `20'`,
-      rating: "",
-      serial: "OVVXX2RQ",
-    },
-    {
-      id: 2,
-      description: "Pipe Spool",
-      size: `10"`,
-      length: `20'`,
-      rating: "",
-      serial: "PZDWVXMQ",
-    },
-    {
-      id: 3,
-      description: "Gate Valve",
-      size: "10#",
-      length: "",
-      rating: "150#",
-      serial: "4G7DA4JP",
-    },
-    {
-      id: 4,
-      description: "Gasket - Spiral wound",
-      size: `10"`,
-      length: "",
-      rating: "150#",
-      serial: "EVRH3Z9R",
-    },
-    {
-      id: 5,
-      description: "A193 CR B7 Stud Bolt",
-      size: `3/4 x 5"`,
-      length: "",
-      rating: "150#",
-      serial: "128SKFSN",
-    },
-  ] as ICatalogGridRow[]);
+  const [rowData, setRowData] = useState<ICatalogGridRow[]>([]);
+  useEffect(() => {
+    getCatalogs().then((catalogs) => {
+      const nodesArray = catalogs.nodes;
+      setRowData(nodesArray);
+    });
+  }, []);
+
+  console.log("[CatalogGrid] catalogs:", rowData);
 
   const [columnDefs, setColumnDefs] = useState<ColDef[]>([
     {
@@ -76,9 +42,9 @@ export const CatalogGrid = (props: ICatalogGrid) => {
 
   const [selectedRows, setSelectedRows] = useState<ICatalogGridRow[]>([]);
 
-const handleRowSelected = useCallback((event: GridReadyEvent) => {
-  setSelectedRows(event.api.getSelectedNodes().map((node) => node.data));
-}, []);
+  const handleRowSelected = useCallback((event: GridReadyEvent) => {
+    setSelectedRows(event.api.getSelectedNodes().map((node) => node.data));
+  }, []);
 
   const handleDeleteRows = (selectedRows: ICatalogGridRow[]) => {
     if (selectedRows.length > 0) {

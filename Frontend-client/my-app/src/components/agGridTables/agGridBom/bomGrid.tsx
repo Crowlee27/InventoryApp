@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useMemo, useState, useCallback, useEffect } from "react";
 import { ColDef, GridApi, GridReadyEvent } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
@@ -9,17 +9,18 @@ import { SearchFilter } from "../../navBars/searchBar/searchFilterGrid";
 import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDialog";
 import { ResetButton } from "../../specialButtons/resetButton";
 import { SearchButton } from "../../specialButtons/searchButton";
-
-
+import { getBoms } from "../../graphQl/queries";
 
 export const BomGrid = (props: IBomGrid) => {
-  const [rowData, setRowData] = useState<IBomGridRow[]>([
-    { id: 1, drawing: 1, catalog: 1, tag: "10-AA-150-1", alias: "" },
-    { id: 2, drawing: 1, catalog: 2, tag: "10-AA-150-2", alias: "" },
-    { id: 3, drawing: 1, catalog: 3, tag: "9ACCW2", alias: "" },
-    { id: 4, drawing: 1, catalog: 4, tag: "7SPWG1", alias: "7SPWG2" },
-    { id: 5, drawing: 1, catalog: 5, tag: "9AJJDB2", alias: "9AJJDB3" },
-  ] as IBomGridRow[]);
+  const [rowData, setRowData] = useState<IBomGridRow[]>([]);
+  useEffect(() => {
+    getBoms().then((boms) => {
+      const nodesArray = boms.nodes;
+      setRowData(nodesArray);
+    });
+  }, []);
+
+  console.log("[BomGrid] boms:", rowData);
 
   const [columnDefs, setColumnDefs] = useState<ColDef[]>([
     {
