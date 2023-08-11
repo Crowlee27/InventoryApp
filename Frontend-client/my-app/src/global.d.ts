@@ -91,10 +91,10 @@ declare global {
     };
   }
 
-interface IDrawingGrid {
-  rowData: IDrawingGridRow[];
-  columnDefs: ColDef[];
-}
+  interface IDrawingGrid {
+    rowData: IDrawingGridRow[];
+    columnDefs: ColDef[];
+  }
 
   interface ICatalogGrid {
     rowData: ICatalogGridRow[];
@@ -109,5 +109,21 @@ interface IDrawingGrid {
   interface IInventoryGrid {
     rowData: IInventoryGridRow[];
     columnDefs: ColDef[];
+  }
+
+  interface IDrawingData {
+    nodes: IDrawingGridRow[];
+  }
+
+  interface ICatalogData {
+    nodes: ICatalogGridRow[];
+  }
+
+  interface IBomData {
+    nodes: IBomGridRow[];
+  }
+
+  interface IInventoryData {
+    nodes: IInventoryGridRow[];
   }
 }
