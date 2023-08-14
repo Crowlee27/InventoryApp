@@ -9,7 +9,9 @@ declare global {
     id: string;
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
     value?: string;
-    setNewNumber?;
+    setNewNumber?: (number: string) => void;
+    setNewItemDescription?;
+    setNewItemPurchased?
   }
 
   interface ITextFieldsProps {
@@ -132,6 +134,8 @@ declare global {
   interface IDrawingFormFields {
     setNewNumber: (number: string) => void;
     setNewDescription: (description: string) => void;
+    drawingNumber: string;
+    drawingDescription: string;
   }
 
   interface ICreateDrawingInput {
