@@ -6,37 +6,41 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-
 import { DrawingsFormFields } from "../drawingDialog/drawingDialogForm";
 import { ItemsDialogForm } from "../itemsDialog/itemsDialogForm";
 import {
   createDrawing,
   checkDrawingExists,
   createCatalog,
+  createBom,
 } from "../../graphQl/queries";
 
 export const AddDrawingsForm = () => {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(1);
-  // const [formData, setFormData] = useState({
-  //   drawingNumber: "",
-  //   drawingDescription: "",
-  //   itemDescription: "",
-  //   itemPurchased: "",
-  //   itemSize: "",
-  //   itemLength: "",
-  //   itemRating: "",
-  //   itemSerial: "",
-  //   itemTag: "",
-  //   itemAlias: "",
-  // });
 
-  const [drawingFormData, setDrawingFormData] = useState({
+  interface DrawingFormData {
+    drawingNumber: string;
+    drawingDescription: string;
+  }
+
+  const [drawingFormData, setDrawingFormData] = useState<DrawingFormData>({
     drawingNumber: "",
     drawingDescription: "",
   });
 
-  const [itemFormData, setItemFormData] = useState({
+  interface ItemFormData {
+    itemDescription: string;
+    itemPurchased: string;
+    itemSize: string;
+    itemLength: string;
+    itemRating: string;
+    itemSerial: string;
+    itemTag: string;
+    itemAlias: string;
+  }
+
+  const initialItemFormData: ItemFormData = {
     itemDescription: "",
     itemPurchased: "",
     itemSize: "",
@@ -45,7 +49,12 @@ export const AddDrawingsForm = () => {
     itemSerial: "",
     itemTag: "",
     itemAlias: "",
-  });
+  };
+
+  const [itemFormData, setItemFormData] =
+    useState<ItemFormData>(initialItemFormData);
+
+  const [formDataHistory, setFormDataHistory] = useState<DrawingFormData[]>([]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -54,13 +63,30 @@ export const AddDrawingsForm = () => {
 
   const handleClose = () => {
     setOpen(false);
+    window.location.reload();
   };
 
   const handleNext = () => {
+    const formData = {
+      drawingNumber: drawingFormData.drawingNumber,
+      drawingDescription: drawingFormData.drawingDescription,
+    };
+    setFormDataHistory((prevHistory) => [...prevHistory, formData]);
+
     setStep((prevStep) => prevStep + 1);
   };
 
   const handleBack = () => {
+    if (formDataHistory.length > 0) {
+      const previousFormData = formDataHistory[formDataHistory.length - 1];
+      setDrawingFormData((prevData) => ({
+        ...prevData,
+        drawingNumber: previousFormData.drawingNumber,
+        drawingDescription: previousFormData.drawingDescription,
+      }));
+
+      setFormDataHistory((prevHistory) => prevHistory.slice(0, -1));
+    }
     setStep((prevStep) => prevStep - 1);
   };
 
@@ -134,57 +160,99 @@ export const AddDrawingsForm = () => {
     }));
   };
 
-  const handleSubmit = async () => {
+  // const handleSubmit = async () => {
+  //   const inputDrawing = {
+  //     drawing: {
+  //       number: drawingFormData.drawingNumber,
+  //       description: drawingFormData.drawingDescription,
+  //     },
+  //   };
+  //   if (!inputDrawing.drawing.description || !inputDrawing.drawing.number) {
+  //     console.error("Number and Description is required");
+  //     return;
+  //   }
+
+  //   const drawingExists = await checkDrawingExists(inputDrawing.drawing.number);
+  //   if (drawingExists) {
+  //     console.error("Drawing with the same number already exists");
+  //     return;
+  //   }
+
+  //   const drawing = await createDrawing(inputDrawing);
+  //   if (drawing) {
+  //     console.log("Drawing created:", drawing);
+  //     console.log("Form data:", drawingFormData);
+  //     handleClose();
+  //     window.location.reload();
+  //   } else {
+  //     console.error("Failed to create drawing");
+  //   }
+  // };
+
+  const handleAddItem = async () => {
     const inputDrawing = {
       drawing: {
         number: drawingFormData.drawingNumber,
         description: drawingFormData.drawingDescription,
       },
     };
+
     if (!inputDrawing.drawing.description || !inputDrawing.drawing.number) {
-      console.error("Number and Description is required");
+      console.error("Number and Description are required for drawing");
       return;
     }
 
     const drawingExists = await checkDrawingExists(inputDrawing.drawing.number);
+
     if (drawingExists) {
-      console.error("Drawing with the same number already exists");
-      return;
-    }
+      console.log("Drawing already exists");
 
-    const drawing = await createDrawing(inputDrawing);
-    if (drawing) {
-      console.log("Drawing created:", drawing);
-      console.log("Form data:", drawingFormData);
-      handleClose();
-      window.location.reload();
+      const inputCatalog = {
+        catalog: {
+          description: itemFormData.itemDescription,
+          size: itemFormData.itemSize,
+          length: itemFormData.itemLength,
+          rating: itemFormData.itemRating,
+          serial: itemFormData.itemSerial,
+        },
+      };
+
+      const catalog = await createCatalog(inputCatalog);
+
+      if (catalog) {
+        console.log("Catalog created:", catalog);
+        console.log("Form data:", itemFormData);
+
+        console.log("Add item", itemFormData);
+
+        const inputBom = {
+          bom: {
+            drawing: drawingExists.id,
+            catalog: catalog.id,
+            tag: itemFormData.itemTag,
+            alias: itemFormData.itemAlias,
+          },
+        };
+
+        const bom = await createBom(inputBom);
+
+        if (!bom) {
+          console.error("Failed to create the bom");
+          return;
+        }
+      }
     } else {
-      console.error("Failed to create drawing");
+      const drawing = await createDrawing(inputDrawing);
+
+      if (!drawing) {
+        console.error("Failed to create the drawing");
+        return;
+      }
+
+      console.log("Drawing created:", drawing);
     }
 
-    
-  };
-
-  const handleAddItem = async () => {
-    const inputCatalog = {
-      catalog: {
-        description: itemFormData.itemDescription,
-        size: itemFormData.itemSize,
-        length: itemFormData.itemLength,
-        rating: itemFormData.itemRating,
-        serial: itemFormData.itemSerial,
-      },
-    };
-
-    const catalog = await createCatalog(inputCatalog);
-    if (catalog) {
-      console.log("Catalog created:", catalog);
-      console.log("Form data:", itemFormData);
-    }
-
-
-
-    console.log("Add item", itemFormData);
+    handleClose();
   };
 
   const renderStepContent = () => {
@@ -193,6 +261,8 @@ export const AddDrawingsForm = () => {
         return (
           <DialogContent>
             <DrawingsFormFields
+              drawingNumber={drawingFormData.drawingNumber}
+              drawingDescription={drawingFormData.drawingDescription}
               setNewNumber={setNewNumber}
               setNewDescription={setNewDescription}
             />
@@ -222,10 +292,10 @@ export const AddDrawingsForm = () => {
   return (
     <div>
       <Button variant="contained" onClick={handleOpen}>
-        Add Drawing Number
+        Add Item
       </Button>
       <Dialog open={open} onClose={handleClose} fullWidth>
-        <DialogTitle>Add Drawing Number & Items</DialogTitle>
+        <DialogTitle>Add Drawing Number & Item</DialogTitle>
         {renderStepContent()}
         <DialogActions>
           {step === 1 ? (
@@ -233,13 +303,13 @@ export const AddDrawingsForm = () => {
               <Button onClick={handleNext} variant="contained" color="primary">
                 Next
               </Button>
-              <Button
-                onClick={handleSubmit}
+              {/* <Button
+                // onClick={handleSubmit}
                 variant="contained"
                 color="primary"
               >
                 Finish
-              </Button>
+              </Button> */}
             </>
           ) : step === 2 ? (
             <>
@@ -251,9 +321,9 @@ export const AddDrawingsForm = () => {
               >
                 Add
               </Button>
-              <Button onClick={handleClose} variant="contained" color="primary">
+              {/* <Button onClick={handleClose} variant="contained" color="primary">
                 Finish
-              </Button>
+              </Button> */}
             </>
           ) : null}
         </DialogActions>

@@ -77,7 +77,7 @@ export const getInventories = async (): Promise<IInventoryData> => {
 
 export const createDrawing = async (
   input: ICreateDrawingInput
-): Promise<ICreateDrawingInput> => {
+): Promise<{ drawing: string; id: number }> => {
   const mutation = gql`
     mutation CreateDrawing($input: CreateDrawingInput!) {
       createDrawing(input: $input) {
@@ -88,10 +88,14 @@ export const createDrawing = async (
     }
   `;
   const { createDrawing } = await client.request<any>(mutation, { input });
-  return createDrawing.drawing;
+  const drawing = createDrawing.drawing;
+  const id = drawing.id;
+  return { drawing, id };
 };
 
-export const checkDrawingExists = async (number: string): Promise<boolean> => {
+export const checkDrawingExists = async (
+  number: string
+): Promise<{ id: number } | null> => {
   const query = gql`
     query CheckDrawingExists($number: String!) {
       drawings(condition: { number: $number }) {
@@ -104,11 +108,22 @@ export const checkDrawingExists = async (number: string): Promise<boolean> => {
     }
   `;
 
-  const { drawings } = await client.request<{ drawings: any }>(query, {
-    number,
-  });
+  try {
+    const { drawings } = await client.request<{
+      drawings: { edges: { node: { id: number } }[] };
+    }>(query, {
+      number,
+    });
 
-  return drawings.edges.length > 0;
+    if (drawings.edges.length > 0) {
+      return drawings.edges[0].node;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Error checking if drawing exists:", error);
+    return null;
+  }
 };
 
 interface ICreateCatalogInput {
@@ -123,7 +138,7 @@ interface ICreateCatalogInput {
 
 export const createCatalog = async (
   input: ICreateCatalogInput
-): Promise<ICreateCatalogInput> => {
+): Promise<{ catalog: string; id: number }> => {
   const mutation = gql`
     mutation CreateCatalog($input: CreateCatalogInput!) {
       createCatalog(input: $input) {
@@ -134,5 +149,32 @@ export const createCatalog = async (
     }
   `;
   const { createCatalog } = await client.request<any>(mutation, { input });
-  return createCatalog.catalog;
+  const catalog = createCatalog.catalog;
+  const id = catalog.id;
+  return { catalog, id };
+};
+
+interface ICreateBomInput {
+  bom: {
+    drawing: number;
+    catalog: number;
+    tag: string;
+    alias: string;
+  };
+}
+
+export const createBom = async (
+  input: ICreateBomInput
+): Promise<ICreateBomInput> => {
+  const mutation = gql`
+    mutation CreateBom($input: CreateBomInput!) {
+      createBom(input: $input) {
+        bom {
+          id
+        }
+      }
+    }
+  `;
+  const { createBom } = await client.request<any>(mutation, { input });
+  return createBom.bom;
 };

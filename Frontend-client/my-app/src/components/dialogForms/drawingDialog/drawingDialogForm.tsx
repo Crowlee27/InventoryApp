@@ -5,6 +5,8 @@ import { DrawingDescSelect } from "./selectDrawingDesc";
 export const DrawingsFormFields = ({
   setNewNumber,
   setNewDescription,
+  drawingNumber,
+  drawingDescription,
 }: IDrawingFormFields) => {
   return (
     <div>
@@ -13,12 +15,13 @@ export const DrawingsFormFields = ({
         name="drawingNumber"
         label="Drawing Number"
         setNewNumber={setNewNumber}
+        value={drawingNumber}
       />
       <DrawingDescSelect
         id="drawingDescription"
         name="drawingDescription"
         label="Drawing Description"
-        value=""
+        value={drawingDescription}
         setNewDescription={setNewDescription}
       />
     </div>
