@@ -12,8 +12,14 @@ export const DrawingNumberText = (props: ITextField) => {
 
   const [number, setNumber] = useState(value);
 
+  // useEffect(() => {
+  //   setNewNumber(number);
+  // }, [number, setNewNumber]);
+
   useEffect(() => {
-    setNewNumber(number);
+    if (setNewNumber) {
+      setNewNumber(number);
+    }
   }, [number, setNewNumber]);
 
   return (
