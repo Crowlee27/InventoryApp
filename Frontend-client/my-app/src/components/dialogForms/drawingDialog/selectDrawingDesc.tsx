@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -11,13 +11,18 @@ export const DrawingDescSelect = (props: ISelectField) => {
     name = "drawingDescription",
     id = "drawingDescription",
     value = "",
+    setNewDescription,
   } = props;
 
-  const [description, setDescription] = React.useState(value);
+  const [description, setDescription] = useState(value);
 
   const handleChange = (event: SelectChangeEvent) => {
     setDescription(event.target.value as string);
   };
+
+  useEffect(() => {
+    setNewDescription(description);
+  }, [description, setNewDescription]);
 
   return (
     <Box>
