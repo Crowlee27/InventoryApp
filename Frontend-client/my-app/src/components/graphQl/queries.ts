@@ -74,3 +74,21 @@ export const getInventories = async (): Promise<IInventoryData> => {
   const { inventories } = await client.request<{ inventories: any }>(query);
   return inventories;
 };
+
+
+
+export const createDrawing = async (
+  input: ICreateDrawingInput
+): Promise<ICreateDrawingInput> => {
+  const mutation = gql`
+    mutation CreateDrawing($input: CreateDrawingInput!) {
+      createDrawing(input: $input) {
+        drawing {
+          id
+        }
+      }
+    }
+  `;
+  const { createDrawing } = await client.request<any>(mutation, { input });
+  return createDrawing.drawing;
+};
