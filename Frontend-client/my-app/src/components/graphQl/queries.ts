@@ -75,8 +75,6 @@ export const getInventories = async (): Promise<IInventoryData> => {
   return inventories;
 };
 
-
-
 export const createDrawing = async (
   input: ICreateDrawingInput
 ): Promise<ICreateDrawingInput> => {
@@ -91,4 +89,50 @@ export const createDrawing = async (
   `;
   const { createDrawing } = await client.request<any>(mutation, { input });
   return createDrawing.drawing;
+};
+
+export const checkDrawingExists = async (number: string): Promise<boolean> => {
+  const query = gql`
+    query CheckDrawingExists($number: String!) {
+      drawings(condition: { number: $number }) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+    }
+  `;
+
+  const { drawings } = await client.request<{ drawings: any }>(query, {
+    number,
+  });
+
+  return drawings.edges.length > 0;
+};
+
+interface ICreateCatalogInput {
+  catalog: {
+    description: string;
+    size: string;
+    length: string;
+    rating: string;
+    serial: string;
+  };
+}
+
+export const createCatalog = async (
+  input: ICreateCatalogInput
+): Promise<ICreateCatalogInput> => {
+  const mutation = gql`
+    mutation CreateCatalog($input: CreateCatalogInput!) {
+      createCatalog(input: $input) {
+        catalog {
+          id
+        }
+      }
+    }
+  `;
+  const { createCatalog } = await client.request<any>(mutation, { input });
+  return createCatalog.catalog;
 };
