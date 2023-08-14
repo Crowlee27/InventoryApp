@@ -9,6 +9,7 @@ declare global {
     id: string;
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
     value?: string;
+    setNewNumber?
   }
 
   interface ITextFieldsProps {
@@ -21,6 +22,7 @@ declare global {
     id: string;
     value: string;
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    setNewDescription?
   }
 
   interface IDrawingGridRow {
@@ -125,5 +127,12 @@ declare global {
 
   interface IInventoryData {
     nodes: IInventoryGridRow[];
+  }
+
+  interface ICreateDrawingInput {
+    drawing: {
+      number: string;
+      description: string;
+    };
   }
 }
