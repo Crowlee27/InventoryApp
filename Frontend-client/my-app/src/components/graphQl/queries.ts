@@ -165,7 +165,7 @@ interface ICreateBomInput {
 
 export const createBom = async (
   input: ICreateBomInput
-): Promise<ICreateBomInput> => {
+): Promise<{bom : string;  id: number}> => {
   const mutation = gql`
     mutation CreateBom($input: CreateBomInput!) {
       createBom(input: $input) {
@@ -176,5 +176,28 @@ export const createBom = async (
     }
   `;
   const { createBom } = await client.request<any>(mutation, { input });
-  return createBom.bom;
+  const bom = createBom.bom;
+  const id = bom.id;
+  return{ bom, id };
+};
+
+interface ICreateInventoryInput { 
+  inventory: {
+    bom: number;
+    purchased: number;
+  }
+}
+
+export const createInventory = async (input: ICreateInventoryInput): Promise<ICreateInventoryInput> => {
+  const mutation = gql`
+    mutation CreateInventory($input: CreateInventoryInput!) {
+      createInventory(input: $input) {
+        inventory {
+          id
+        }
+      }
+    }
+  `;
+  const { createInventory } = await client.request<any>(mutation, { input });
+  return createInventory.inventory;
 };

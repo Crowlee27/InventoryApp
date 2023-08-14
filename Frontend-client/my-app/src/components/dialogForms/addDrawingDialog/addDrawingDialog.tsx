@@ -13,6 +13,7 @@ import {
   checkDrawingExists,
   createCatalog,
   createBom,
+  createInventory,
 } from "../../graphQl/queries";
 
 export const AddDrawingsForm = () => {
@@ -160,35 +161,6 @@ export const AddDrawingsForm = () => {
     }));
   };
 
-  // const handleSubmit = async () => {
-  //   const inputDrawing = {
-  //     drawing: {
-  //       number: drawingFormData.drawingNumber,
-  //       description: drawingFormData.drawingDescription,
-  //     },
-  //   };
-  //   if (!inputDrawing.drawing.description || !inputDrawing.drawing.number) {
-  //     console.error("Number and Description is required");
-  //     return;
-  //   }
-
-  //   const drawingExists = await checkDrawingExists(inputDrawing.drawing.number);
-  //   if (drawingExists) {
-  //     console.error("Drawing with the same number already exists");
-  //     return;
-  //   }
-
-  //   const drawing = await createDrawing(inputDrawing);
-  //   if (drawing) {
-  //     console.log("Drawing created:", drawing);
-  //     console.log("Form data:", drawingFormData);
-  //     handleClose();
-  //     window.location.reload();
-  //   } else {
-  //     console.error("Failed to create drawing");
-  //   }
-  // };
-
   const handleAddItem = async () => {
     const inputDrawing = {
       drawing: {
@@ -219,28 +191,46 @@ export const AddDrawingsForm = () => {
 
       const catalog = await createCatalog(inputCatalog);
 
-      if (catalog) {
-        console.log("Catalog created:", catalog);
-        console.log("Form data:", itemFormData);
-
-        console.log("Add item", itemFormData);
-
-        const inputBom = {
-          bom: {
-            drawing: drawingExists.id,
-            catalog: catalog.id,
-            tag: itemFormData.itemTag,
-            alias: itemFormData.itemAlias,
-          },
-        };
-
-        const bom = await createBom(inputBom);
-
-        if (!bom) {
-          console.error("Failed to create the bom");
-          return;
-        }
+      if (!catalog) {
+        console.error("Failed to create the catalog");
+        return;
       }
+
+      console.log("Catalog created:", catalog);
+
+      const inputBom = {
+        bom: {
+          drawing: drawingExists.id,
+          catalog: catalog.id,
+          tag: itemFormData.itemTag,
+          alias: itemFormData.itemAlias,
+        },
+      };
+
+      const bom = await createBom(inputBom);
+
+      if (!bom) {
+        console.error("Failed to create the bom");
+        return;
+      }
+
+      console.log("BOM created:", bom);
+
+      const inputInventory = {
+        inventory: {
+          bom: bom.id,
+          purchased: parseInt(itemFormData.itemPurchased),
+        },
+      };
+
+      const inventory = await createInventory(inputInventory);
+
+      if (!inventory) {
+        console.error("Failed to create the inventory");
+        return;
+      }
+
+      console.log("Inventory created:", inventory);
     } else {
       const drawing = await createDrawing(inputDrawing);
 
@@ -250,6 +240,59 @@ export const AddDrawingsForm = () => {
       }
 
       console.log("Drawing created:", drawing);
+
+      const inputCatalog = {
+        catalog: {
+          description: itemFormData.itemDescription,
+          size: itemFormData.itemSize,
+          length: itemFormData.itemLength,
+          rating: itemFormData.itemRating,
+          serial: itemFormData.itemSerial,
+        },
+      };
+
+      const catalog = await createCatalog(inputCatalog);
+
+      if (!catalog) {
+        console.error("Failed to create the catalog");
+        return;
+      }
+
+      console.log("Catalog created:", catalog);
+
+      const inputBom = {
+        bom: {
+          drawing: drawing.id,
+          catalog: catalog.id,
+          tag: itemFormData.itemTag,
+          alias: itemFormData.itemAlias,
+        },
+      };
+
+      const bom = await createBom(inputBom);
+
+      if (!bom) {
+        console.error("Failed to create the bom");
+        return;
+      }
+
+      console.log("BOM created:", bom);
+
+      const inputInventory = {
+        inventory: {
+          bom: bom.id,
+          purchased: parseInt(itemFormData.itemPurchased),
+        },
+      };
+
+      const inventory = await createInventory(inputInventory);
+
+      if (!inventory) {
+        console.error("Failed to create the inventory");
+        return;
+      }
+
+      console.log("Inventory created:", inventory);
     }
 
     handleClose();
