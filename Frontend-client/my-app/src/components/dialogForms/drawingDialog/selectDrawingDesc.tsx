@@ -35,7 +35,7 @@ export const DrawingDescSelect = (props: ISelectField) => {
           label={label}
           onChange={handleChange}
         >
-          <MenuItem value={"Piping Iso"}>Piping ISO</MenuItem>
+          <MenuItem value={"Piping ISO"}>Piping ISO</MenuItem>
         </Select>
       </FormControl>
     </Box>
