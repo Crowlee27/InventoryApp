@@ -9,7 +9,7 @@ import { SearchFilter } from "../../navBars/searchBar/searchFilterGrid";
 import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDialog";
 import { ResetButton } from "../../specialButtons/resetButton";
 import { SearchButton } from "../../specialButtons/searchButton";
-import { getCatalogs } from "../../graphQl/queries";
+import { getCatalogs, deleteCatalog } from "../../graphQl/queries";
 
 export const CatalogGrid = (props: ICatalogGrid) => {
   const [rowData, setRowData] = useState<ICatalogGridRow[]>([]);
@@ -54,15 +54,26 @@ export const CatalogGrid = (props: ICatalogGrid) => {
     }
   };
 
-  const handleConfirmDelete = (selectedRows: ICatalogGridRow[]) => {
+  
+
+
+  const handleConfirmDelete = async (selectedRows: ICatalogGridRow[]) => {
     if (selectedRows.length > 0) {
-      const updatedRowData = rowData.filter(
-        (row) => !selectedRows.includes(row)
-      );
-      setRowData(updatedRowData);
-      setSelectedRows([]);
+      try {
+        for (const row of selectedRows) {
+         await deleteCatalog(row.id);
+        }
+        const updatedRowData = rowData.filter(
+          (row) => !selectedRows.includes(row)
+        );
+        setRowData(updatedRowData);
+        setSelectedRows([]);
+      } catch (error) {
+        console.error("Failed to delete catalog", error);
+      }
     }
     setShowConfirmation(false);
+    window.location.reload();
   };
 
   const defaultColDef = useMemo<IDefaultColDef>(

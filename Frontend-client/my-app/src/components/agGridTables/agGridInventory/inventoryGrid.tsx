@@ -9,7 +9,7 @@ import { SearchFilter } from "../../navBars/searchBar/searchFilterGrid";
 import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDialog";
 import { ResetButton } from "../../specialButtons/resetButton";
 import { SearchButton } from "../../specialButtons/searchButton";
-import { getInventories } from "../../graphQl/queries";
+import { getInventories, deleteInventory } from "../../graphQl/queries";
 
 export const InventoryGrid = (props: IInventoryGrid) => {
   const [rowData, setRowData] = useState<IInventoryGridRow[]>([]);
@@ -55,15 +55,23 @@ export const InventoryGrid = (props: IInventoryGrid) => {
     }
   };
 
-  const handleConfirmDelete = (selectedRows: IInventoryGridRow[]) => {
+  const handleConfirmDelete = async (selectedRows: IInventoryGridRow[]) => {
     if (selectedRows.length > 0) {
-      const updatedRowData = rowData.filter(
-        (row) => !selectedRows.includes(row)
-      );
-      setRowData(updatedRowData);
-      setSelectedRows([]);
+      try {
+        for (const row of selectedRows) {
+          await deleteInventory(row.id);
+        }
+        const updatedRowData = rowData.filter(
+          (row) => !selectedRows.includes(row)
+        );
+        setRowData(updatedRowData);
+        setSelectedRows([]);
+      } catch (error) {
+        console.error("Failed to delete inventory: ", error);
+      }
     }
     setShowConfirmation(false);
+    window.location.reload();
   };
 
   const defaultColDef = useMemo<IDefaultColDef>(

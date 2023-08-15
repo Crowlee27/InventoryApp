@@ -9,7 +9,7 @@ import { SearchFilter } from "../../navBars/searchBar/searchFilterGrid";
 import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDialog";
 import { ResetButton } from "../../specialButtons/resetButton";
 import { SearchButton } from "../../specialButtons/searchButton";
-import { getBoms } from "../../graphQl/queries";
+import { getBoms, deleteBom } from "../../graphQl/queries";
 
 export const BomGrid = (props: IBomGrid) => {
   const [rowData, setRowData] = useState<IBomGridRow[]>([]);
@@ -53,15 +53,23 @@ export const BomGrid = (props: IBomGrid) => {
     }
   };
 
-  const handleConfirmDelete = (selectedRows: IBomGridRow[]) => {
+  const handleConfirmDelete = async (selectedRows: IBomGridRow[]) => {
     if (selectedRows.length > 0) {
-      const updatedRowData = rowData.filter(
-        (row) => !selectedRows.includes(row)
-      );
-      setRowData(updatedRowData);
-      setSelectedRows([]);
+      try {
+        for (const row of selectedRows) {
+          await deleteBom(row.id);
+        }
+        const updatedRowData = rowData.filter(
+          (row) => !selectedRows.includes(row)
+        );
+        setRowData(updatedRowData);
+        setSelectedRows([]);
+      } catch (error) {
+        console.error("Error deleting the rows:", error);
+      }
     }
     setShowConfirmation(false);
+    window.location.reload();
   };
 
   const defaultColDef = useMemo<IDefaultColDef>(

@@ -9,7 +9,7 @@ import { SearchFilter } from "../../navBars/searchBar/searchFilterGrid";
 import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDialog";
 import { ResetButton } from "../../specialButtons/resetButton";
 import { SearchButton } from "../../specialButtons/searchButton";
-import { getDrawings } from "../../graphQl/queries";
+import { getDrawings, deleteDrawing } from "../../graphQl/queries";
 
 export const DrawingGrid = (props: IDrawingGrid) => {
   const [rowData, setRowData] = useState<IDrawingGridRow[]>([]);
@@ -55,15 +55,24 @@ export const DrawingGrid = (props: IDrawingGrid) => {
     }
   };
 
-  const handleConfirmDelete = (selectedRows: IDrawingGridRow[]) => {
+  const handleConfirmDelete = async (selectedRows: IDrawingGridRow[]) => {
     if (selectedRows.length > 0) {
-      const updatedRowData = rowData.filter(
-        (row) => !selectedRows.includes(row)
-      );
-      setRowData(updatedRowData);
-      setSelectedRows([]);
+      try {
+        for (const row of selectedRows) {
+          await deleteDrawing(row.id);
+        }
+
+        const updatedRowData = rowData.filter(
+          (row) => !selectedRows.includes(row)
+        );
+        setRowData(updatedRowData);
+        setSelectedRows([]);
+      } catch (error) {
+        console.error("Failed to delete drawing", error);
+      }
     }
     setShowConfirmation(false);
+    window.location.reload();
   };
 
   const defaultColDef = useMemo<IDefaultColDef>(

@@ -165,7 +165,7 @@ interface ICreateBomInput {
 
 export const createBom = async (
   input: ICreateBomInput
-): Promise<{bom : string;  id: number}> => {
+): Promise<{ bom: string; id: number }> => {
   const mutation = gql`
     mutation CreateBom($input: CreateBomInput!) {
       createBom(input: $input) {
@@ -178,17 +178,19 @@ export const createBom = async (
   const { createBom } = await client.request<any>(mutation, { input });
   const bom = createBom.bom;
   const id = bom.id;
-  return{ bom, id };
+  return { bom, id };
 };
 
-interface ICreateInventoryInput { 
+interface ICreateInventoryInput {
   inventory: {
     bom: number;
     purchased: number;
-  }
+  };
 }
 
-export const createInventory = async (input: ICreateInventoryInput): Promise<ICreateInventoryInput> => {
+export const createInventory = async (
+  input: ICreateInventoryInput
+): Promise<ICreateInventoryInput> => {
   const mutation = gql`
     mutation CreateInventory($input: CreateInventoryInput!) {
       createInventory(input: $input) {
@@ -200,4 +202,116 @@ export const createInventory = async (input: ICreateInventoryInput): Promise<ICr
   `;
   const { createInventory } = await client.request<any>(mutation, { input });
   return createInventory.inventory;
+};
+
+export const deleteDrawing = async (id: number): Promise<void> => {
+  const mutation = gql`
+    mutation DeleteDrawing($input: DeleteDrawingInput!) {
+      deleteDrawing(input: $input) {
+        drawing {
+          id
+        }
+      }
+    }
+  `;
+  try {
+    const variables = {
+      input: { id },
+    };
+
+    const response: {
+      deleteDrawing: {
+        drawing: { id: number };
+      };
+    } = await client.request(mutation, variables);
+    const deletedDrawing = response.deleteDrawing.drawing;
+
+    console.log("Drawing deleted successfully:", deletedDrawing);
+  } catch (error) {
+    console.error("Failed to delete drawing", error);
+  }
+};
+
+export const deleteCatalog = async (id: number): Promise<void> => {
+  const mutation = gql`
+    mutation DeleteCatalog($input: DeleteCatalogInput!) {
+      deleteCatalog(input: $input) {
+        catalog {
+          id
+        }
+      }
+    }
+  `;
+  try {
+    const variables = {
+      input: { id },
+    };
+
+    const response: {
+      deleteCatalog: {
+        catalog: { id: number };
+      };
+    } = await client.request(mutation, variables);
+    const deletedCatalog = response.deleteCatalog.catalog;
+
+    console.log("Catalog deleted successfully:", deletedCatalog);
+  } catch (error) {
+    console.error("Failed to delete catalog", error);
+  }
+};
+
+export const deleteBom = async (id: number): Promise<void> => {
+  const mutation = gql`
+    mutation DeleteBom($input: DeleteBomInput!) {
+      deleteBom(input: $input) {
+        bom {
+          id
+        }
+      }
+    }
+  `;
+  try {
+    const variables = {
+      input: { id },
+    };
+
+    const response: {
+      deleteBom: {
+        bom: { id: number };
+      };
+    } = await client.request(mutation, variables);
+    const deletedBom = response.deleteBom.bom;
+
+    console.log("Bom deleted successfully:", deletedBom);
+  } catch (error) {
+    console.error("Failed to delete bom", error);
+  }
+};
+
+export const deleteInventory = async (id: number): Promise<void> => {
+  const mutation = gql`
+    mutation DeleteInventory($input: DeleteInventoryInput!) {
+      deleteInventory(input: $input) {
+        inventory {
+          id
+        }
+      }
+    }
+  `;
+  try {
+    const variables = {
+      input: { id },
+    };
+
+    const response: {
+      deleteInventory: {
+        inventory: { id: number };
+      };
+    } = await client.request(mutation, variables);
+    const deletedInventory = response.deleteInventory.inventory;
+
+    console.log("Inventory deleted successfully:", deletedInventory);
+  } catch (error) {
+    console.error("Failed to delete inventory", error);
+  }
 };
