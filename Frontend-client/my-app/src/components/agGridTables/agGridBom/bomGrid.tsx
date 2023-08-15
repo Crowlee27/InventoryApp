@@ -9,7 +9,7 @@ import { SearchFilter } from "../../navBars/searchBar/searchFilterGrid";
 import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDialog";
 import { ResetButton } from "../../specialButtons/resetButton";
 import { SearchButton } from "../../specialButtons/searchButton";
-import { getBoms, deleteBom } from "../../graphQl/queries";
+import { getBoms, deleteBom, updateBom } from "../../graphQl/queries";
 
 export const BomGrid = (props: IBomGrid) => {
   const [rowData, setRowData] = useState<IBomGridRow[]>([]);
@@ -44,6 +44,19 @@ export const BomGrid = (props: IBomGrid) => {
   const handleRowSelected = useCallback((event: GridReadyEvent) => {
     setSelectedRows(event.api.getSelectedNodes().map((node) => node.data));
   }, []);
+
+  const handleUpdateRows = async (selectedRows: IBomGridRow[]) => {
+    try {
+      for (const row of selectedRows) {
+        await updateBom(row);
+      }
+      console.log(" Bom updated successfully");
+    } catch (error) {
+      console.error("Failed to update bom:", error);
+    }
+    window.location.reload();
+  };
+
 
   const handleDeleteRows = (selectedRows: IBomGridRow[]) => {
     if (selectedRows.length > 0) {
@@ -134,6 +147,11 @@ export const BomGrid = (props: IBomGrid) => {
         defaultColDef={defaultColDef}
         rowSelection="multiple"
         onGridReady={onGridReady}
+        onCellValueChanged={(event) => {
+          if (event.oldValue !== event.newValue) {
+            handleUpdateRows([event.data]);
+          }
+        }}
       />
     </div>
   );

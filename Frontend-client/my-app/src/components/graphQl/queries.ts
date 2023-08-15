@@ -315,3 +315,207 @@ export const deleteInventory = async (id: number): Promise<void> => {
     console.error("Failed to delete inventory", error);
   }
 };
+
+export const updateDrawing = async(
+  row: IDrawingGridRow
+): Promise<void> => {
+  const mutation = gql`
+    mutation UpdateDrawing($input: UpdateDrawingInput!) {
+      updateDrawing(input: $input) {
+        drawing {
+          id
+          description
+          number
+        }
+      }
+    }
+  `;
+  try {
+    const input = {
+      id: row.id,
+      patch: { ...row },
+    };
+    
+    const response: {
+      updateDrawing: {
+        drawing: {
+          id: number;
+          description: string;
+          number: string;
+        } | null;
+      };
+    } = await client.request(mutation, { input });
+
+    if (response.updateDrawing === null) {
+      console.error("Failed to update drawing. Null response received.");
+      return;
+    }
+
+    const updatedDrawing = response.updateDrawing.drawing;
+
+     if (updatedDrawing) {
+      console.log("Drawing updated successfully:", updatedDrawing);
+    }
+  } catch (error) {
+    console.error("Failed to update Drawing", error);
+  }
+};
+
+
+export const updateCatalog = async( 
+  row: ICatalogGridRow
+): Promise<void> => {
+  const mutation = gql`
+    mutation UpdateCatalog($input: UpdateCatalogInput!) {
+      updateCatalog(input: $input) {
+        catalog {
+          id
+          description
+          size
+          length
+          rating
+          serial
+        }
+      }
+    }
+  `;
+  try {
+    const input = {
+      id: row.id,
+      patch: { ...row },
+    };
+
+    const response: {
+      updateCatalog: {
+        catalog: {
+          id: number;
+          description: string;
+          size: string;
+          length: number;
+          rating: string;
+          serial: string;
+        } | null;
+      };
+    } = await client.request(mutation, { input });
+
+    if (response.updateCatalog === null) {
+      console.error("Failed to update catalog. Null response received.");
+      return;
+    }
+
+    const updatedCatalog = response.updateCatalog.catalog;
+
+    if (updatedCatalog) {
+      console.log("Catalog updated successfully:", updatedCatalog);
+    }
+  } catch (error) {
+    console.error("Failed to update Catalog", error);
+  }
+};
+
+export const updateBom = async(
+  row: IBomGridRow
+): Promise<void> => {
+  const mutation = gql`
+    mutation UpdateBom($input: UpdateBomInput!) {
+      updateBom(input: $input) {
+        bom {
+          id
+          drawing
+          catalog
+          tag
+          alias
+        }
+      }
+    }
+  `;
+  try {
+    const input = {
+      id: row.id,
+      patch: { ...row },
+    };
+
+    const response: {
+      updateBom: {
+        bom: {
+          id: number;
+          drawing: number;
+          catalog: number;
+          tag: string;
+          alias: string;
+        } | null;
+      };
+    } = await client.request(mutation, { input });
+
+    if (response.updateBom === null) {
+      console.error("Failed to update bom. Null response received.");
+      return;
+    }
+
+    const updatedBom = response.updateBom.bom;
+
+    if (updatedBom) {
+      console.log("Bom updated successfully:", updatedBom);
+    }
+  } catch (error) {
+    console.error("Failed to update Bom", error);
+  }
+};
+
+
+
+
+
+export const updateInventory = async (
+  row: IInventoryGridRow
+): Promise<void> => {
+  const mutation = gql`
+    mutation UpdateInventory($input: UpdateInventoryInput!) {
+      updateInventory(input: $input) {
+        inventory {
+          id
+          bom
+          purchased
+          received
+          outstanding
+          issued
+          remaining
+        }
+      }
+    }
+  `;
+
+  try {
+    const input = {
+      id: row.id,
+      patch: { ...row },
+    };
+
+    const response: {
+      updateInventory: {
+        inventory: {
+          id: number;
+          bom: number;
+          purchased: number;
+          received: number;
+          outstanding: number;
+          issued: number;
+          remaining: number;
+        } | null;
+      };
+    } = await client.request(mutation, { input });
+
+    if (response.updateInventory === null) {
+      console.error("Failed to update inventory. Null response received.");
+      return;
+    }
+
+    const updatedInventory = response.updateInventory.inventory;
+
+    if (updatedInventory) {
+      console.log("Inventory updated successfully:", updatedInventory);
+    }
+  } catch (error) {
+    console.error("Failed to update inventory", error);
+  }
+};

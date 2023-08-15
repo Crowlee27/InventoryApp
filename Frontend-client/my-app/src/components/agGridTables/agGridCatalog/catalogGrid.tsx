@@ -9,7 +9,7 @@ import { SearchFilter } from "../../navBars/searchBar/searchFilterGrid";
 import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDialog";
 import { ResetButton } from "../../specialButtons/resetButton";
 import { SearchButton } from "../../specialButtons/searchButton";
-import { getCatalogs, deleteCatalog } from "../../graphQl/queries";
+import { getCatalogs, deleteCatalog, updateCatalog } from "../../graphQl/queries";
 
 export const CatalogGrid = (props: ICatalogGrid) => {
   const [rowData, setRowData] = useState<ICatalogGridRow[]>([]);
@@ -45,6 +45,18 @@ export const CatalogGrid = (props: ICatalogGrid) => {
   const handleRowSelected = useCallback((event: GridReadyEvent) => {
     setSelectedRows(event.api.getSelectedNodes().map((node) => node.data));
   }, []);
+
+  const handleUpdateRows = async (selectedRows: ICatalogGridRow[]) => {
+    try {
+      for (const row of selectedRows) {
+        await updateCatalog(row);
+      }
+      console.log(" Catalog updated successfully");
+    } catch (error) {
+      console.error("Failed to update catalog:", error);
+    }
+    window.location.reload();
+  }
 
   const handleDeleteRows = (selectedRows: ICatalogGridRow[]) => {
     if (selectedRows.length > 0) {
@@ -140,6 +152,11 @@ export const CatalogGrid = (props: ICatalogGrid) => {
         defaultColDef={defaultColDef}
         rowSelection="multiple"
         onGridReady={onGridReady}
+        onCellValueChanged={(event) => {
+          if (event.oldValue !== event.newValue) {
+            handleUpdateRows([event.data]);
+          }
+        }}
       />
     </div>
   );

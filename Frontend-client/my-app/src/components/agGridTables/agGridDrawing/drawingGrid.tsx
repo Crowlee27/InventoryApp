@@ -9,7 +9,7 @@ import { SearchFilter } from "../../navBars/searchBar/searchFilterGrid";
 import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDialog";
 import { ResetButton } from "../../specialButtons/resetButton";
 import { SearchButton } from "../../specialButtons/searchButton";
-import { getDrawings, deleteDrawing } from "../../graphQl/queries";
+import { getDrawings, deleteDrawing, updateDrawing } from "../../graphQl/queries";
 
 export const DrawingGrid = (props: IDrawingGrid) => {
   const [rowData, setRowData] = useState<IDrawingGridRow[]>([]);
@@ -46,6 +46,17 @@ export const DrawingGrid = (props: IDrawingGrid) => {
   const handleRowSelected = useCallback((event: GridReadyEvent) => {
     setSelectedRows(event.api.getSelectedNodes().map((node) => node.data));
   }, []);
+
+  const handleUpdateRows = async (selectedRows: IDrawingGridRow[]) => {
+    try {
+      for (const row of selectedRows) {
+        await updateDrawing(row);
+      }
+      console.log(" Drawing updated successfully");
+    } catch (error) {
+      console.error("Failed to update drawing:", error);
+    }
+  }
 
   const handleDeleteRows = (selectedRows: IDrawingGridRow[]) => {
     if (selectedRows.length > 0) {
@@ -138,6 +149,11 @@ export const DrawingGrid = (props: IDrawingGrid) => {
         defaultColDef={defaultColDef}
         rowSelection="multiple"
         onGridReady={onGridReady}
+        onCellValueChanged={(event) => {
+          if (event.oldValue !== event.newValue) {
+            handleUpdateRows([event.data]);
+          }
+        }}
       />
     </div>
   );

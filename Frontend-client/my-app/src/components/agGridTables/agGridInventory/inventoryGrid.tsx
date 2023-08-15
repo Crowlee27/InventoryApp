@@ -9,7 +9,7 @@ import { SearchFilter } from "../../navBars/searchBar/searchFilterGrid";
 import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDialog";
 import { ResetButton } from "../../specialButtons/resetButton";
 import { SearchButton } from "../../specialButtons/searchButton";
-import { getInventories, deleteInventory } from "../../graphQl/queries";
+import { getInventories, deleteInventory, updateInventory } from "../../graphQl/queries";
 
 export const InventoryGrid = (props: IInventoryGrid) => {
   const [rowData, setRowData] = useState<IInventoryGridRow[]>([]);
@@ -31,7 +31,7 @@ export const InventoryGrid = (props: IInventoryGrid) => {
       pinned: "left",
       width: 100,
     },
-    { field: "bom" },
+    { field: "bom", editable: false },
     { field: "purchased" },
     { field: "received" },
     { field: "outstanding" },
@@ -46,6 +46,21 @@ export const InventoryGrid = (props: IInventoryGrid) => {
   const handleRowSelected = useCallback((event: GridReadyEvent) => {
     setSelectedRows(event.api.getSelectedNodes().map((node) => node.data));
   }, []);
+
+
+const handleUpdateRows = async (selectedRows: IInventoryGridRow[]) => {
+  try {
+    for (const row of selectedRows) {
+      await updateInventory(row);
+    }
+
+    console.log("Inventory updated successfully");
+  } catch (error) {
+    console.error("Failed to update inventory:", error);
+  }
+  window.location.reload();
+};
+
 
   const handleDeleteRows = (selectedRows: IInventoryGridRow[]) => {
     if (selectedRows.length > 0) {
@@ -138,6 +153,11 @@ export const InventoryGrid = (props: IInventoryGrid) => {
         defaultColDef={defaultColDef}
         rowSelection="multiple"
         onGridReady={onGridReady}
+        onCellValueChanged={(event) => {
+          if (event.oldValue !== event.newValue) {
+            handleUpdateRows([event.data]);
+          }
+        }}
       />
     </div>
   );

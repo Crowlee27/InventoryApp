@@ -55,7 +55,7 @@ declare global {
     bom: number;
     purchased: number;
     received: number;
-    outstanding?: number;
+    outstanding: number;
     issued: number;
     remaining: number;
   }
