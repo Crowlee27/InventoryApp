@@ -1,6 +1,12 @@
-import { GraphQLClient, gql } from "graphql-request";
+import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
+import { GraphQLClient } from "graphql-request";
 
 const client = new GraphQLClient("http://localhost:9000/graphql");
+
+export const apolloClient = new ApolloClient({
+  uri: "http://localhost:9000/graphql",
+  cache: new InMemoryCache(),
+});
 
 export const getDrawings = async (): Promise<IDrawingData> => {
   const query = gql`
@@ -14,8 +20,11 @@ export const getDrawings = async (): Promise<IDrawingData> => {
       }
     }
   `;
-  const { drawings } = await client.request<{ drawings: any }>(query);
-  return drawings;
+  const { data } = await apolloClient.query({
+    query,
+    fetchPolicy: "network-only",
+  });
+  return data.drawings;
 };
 
 export const getCatalogs = async (): Promise<ICatalogData> => {
@@ -33,8 +42,11 @@ export const getCatalogs = async (): Promise<ICatalogData> => {
       }
     }
   `;
-  const { catalogs } = await client.request<{ catalogs: any }>(query);
-  return catalogs;
+  const { data } = await apolloClient.query({
+    query,
+    fetchPolicy: "network-only",
+  });
+  return data.catalogs;
 };
 
 export const getBoms = async (): Promise<IBomData> => {
@@ -51,8 +63,11 @@ export const getBoms = async (): Promise<IBomData> => {
       }
     }
   `;
-  const { boms } = await client.request<{ boms: any }>(query);
-  return boms;
+  const { data } = await apolloClient.query({
+    query,
+    fetchPolicy: "network-only",
+  });
+  return data.boms;
 };
 
 export const getInventories = async (): Promise<IInventoryData> => {
@@ -71,8 +86,11 @@ export const getInventories = async (): Promise<IInventoryData> => {
       }
     }
   `;
-  const { inventories } = await client.request<{ inventories: any }>(query);
-  return inventories;
+  const { data } = await apolloClient.query({
+    query,
+    fetchPolicy: "network-only",
+  });
+  return data.inventories;
 };
 
 export const createDrawing = async (
@@ -87,10 +105,13 @@ export const createDrawing = async (
       }
     }
   `;
-  const { createDrawing } = await client.request<any>(mutation, { input });
-  const drawing = createDrawing.drawing;
-  const id = drawing.id;
-  return { drawing, id };
+  const { data } = await apolloClient.mutate({
+    mutation,
+    variables: { input },
+  });
+  const id = data.createDrawing.drawing.id;
+  const drawing = data.createDrawing.drawing;
+  return { id, drawing };
 };
 
 export const checkDrawingExists = async (
@@ -107,13 +128,15 @@ export const checkDrawingExists = async (
       }
     }
   `;
-
   try {
-    const { drawings } = await client.request<{
+    const { data } = await apolloClient.query<{
       drawings: { edges: { node: { id: number } }[] };
-    }>(query, {
-      number,
+    }>({
+      query,
+      variables: { number },
     });
+
+    const { drawings } = data;
 
     if (drawings.edges.length > 0) {
       return drawings.edges[0].node;
@@ -148,10 +171,13 @@ export const createCatalog = async (
       }
     }
   `;
-  const { createCatalog } = await client.request<any>(mutation, { input });
-  const catalog = createCatalog.catalog;
-  const id = catalog.id;
-  return { catalog, id };
+  const { data } = await apolloClient.mutate({
+    mutation,
+    variables: { input },
+  });
+  const id = data.createCatalog.catalog.id;
+  const catalog = data.createCatalog.catalog;
+  return { id, catalog };
 };
 
 interface ICreateBomInput {
@@ -175,10 +201,13 @@ export const createBom = async (
       }
     }
   `;
-  const { createBom } = await client.request<any>(mutation, { input });
-  const bom = createBom.bom;
-  const id = bom.id;
-  return { bom, id };
+  const { data } = await apolloClient.mutate({
+    mutation,
+    variables: { input },
+  });
+  const id = data.createBom.bom.id;
+  const bom = data.createBom.bom;
+  return { id, bom };
 };
 
 interface ICreateInventoryInput {
@@ -200,8 +229,12 @@ export const createInventory = async (
       }
     }
   `;
-  const { createInventory } = await client.request<any>(mutation, { input });
-  return createInventory.inventory;
+  const { data } = await apolloClient.mutate({
+    mutation,
+    variables: { input },
+  });
+  const inventory = data.createInventory.inventory;
+  return { inventory };
 };
 
 export const deleteDrawing = async (id: number): Promise<void> => {
@@ -219,14 +252,21 @@ export const deleteDrawing = async (id: number): Promise<void> => {
       input: { id },
     };
 
-    const response: {
+    const response = await apolloClient.mutate<{
       deleteDrawing: {
         drawing: { id: number };
       };
-    } = await client.request(mutation, variables);
-    const deletedDrawing = response.deleteDrawing.drawing;
+    }>({
+      mutation,
+      variables,
+    });
 
-    console.log("Drawing deleted successfully:", deletedDrawing);
+    if (response.data) {
+      const deletedDrawing = response.data.deleteDrawing.drawing;
+      console.log("Drawing deleted successfully:", deletedDrawing);
+    } else {
+      console.error("Failed to delete drawing: Invalid response data");
+    }
   } catch (error) {
     console.error("Failed to delete drawing", error);
   }
@@ -247,14 +287,21 @@ export const deleteCatalog = async (id: number): Promise<void> => {
       input: { id },
     };
 
-    const response: {
+    const response = await apolloClient.mutate<{
       deleteCatalog: {
         catalog: { id: number };
       };
-    } = await client.request(mutation, variables);
-    const deletedCatalog = response.deleteCatalog.catalog;
+    }>({
+      mutation,
+      variables,
+    });
 
-    console.log("Catalog deleted successfully:", deletedCatalog);
+    if (response.data) {
+      const deletedCatalog = response.data.deleteCatalog.catalog;
+      console.log("Catalog deleted successfully:", deletedCatalog);
+    } else {
+      console.error("Failed to delete catalog: Invalid response data");
+    }
   } catch (error) {
     console.error("Failed to delete catalog", error);
   }
@@ -275,14 +322,21 @@ export const deleteBom = async (id: number): Promise<void> => {
       input: { id },
     };
 
-    const response: {
+    const response = await apolloClient.mutate<{
       deleteBom: {
         bom: { id: number };
       };
-    } = await client.request(mutation, variables);
-    const deletedBom = response.deleteBom.bom;
+    }>({
+      mutation,
+      variables,
+    });
 
-    console.log("Bom deleted successfully:", deletedBom);
+    if (response.data) {
+      const deletedBom = response.data.deleteBom.bom;
+      console.log("Bom deleted successfully:", deletedBom);
+    } else {
+      console.error("Failed to delete bom: Invalid response data");
+    }
   } catch (error) {
     console.error("Failed to delete bom", error);
   }
@@ -303,22 +357,27 @@ export const deleteInventory = async (id: number): Promise<void> => {
       input: { id },
     };
 
-    const response: {
+    const response = await apolloClient.mutate<{
       deleteInventory: {
         inventory: { id: number };
       };
-    } = await client.request(mutation, variables);
-    const deletedInventory = response.deleteInventory.inventory;
+    }>({
+      mutation,
+      variables,
+    });
 
-    console.log("Inventory deleted successfully:", deletedInventory);
+    if (response.data) {
+      const deletedInventory = response.data.deleteInventory.inventory;
+      console.log("Inventory deleted successfully:", deletedInventory);
+    } else {
+      console.error("Failed to delete inventory: Invalid response data");
+    }
   } catch (error) {
     console.error("Failed to delete inventory", error);
   }
 };
 
-export const updateDrawing = async(
-  row: IDrawingGridRow
-): Promise<void> => {
+export const updateDrawing = async (row: IDrawingGridRow): Promise<void> => {
   const mutation = gql`
     mutation UpdateDrawing($input: UpdateDrawingInput!) {
       updateDrawing(input: $input) {
@@ -331,29 +390,21 @@ export const updateDrawing = async(
     }
   `;
   try {
+    const rowCopy = { ...row };
+
     const input = {
-      id: row.id,
-      patch: { ...row },
+      id: rowCopy.id,
+      patch: rowCopy,
     };
-    
-    const response: {
-      updateDrawing: {
-        drawing: {
-          id: number;
-          description: string;
-          number: string;
-        } | null;
-      };
-    } = await client.request(mutation, { input });
 
-    if (response.updateDrawing === null) {
-      console.error("Failed to update drawing. Null response received.");
-      return;
-    }
+    const response = await apolloClient.mutate({
+      mutation,
+      variables: { input },
+    });
 
-    const updatedDrawing = response.updateDrawing.drawing;
+    const updatedDrawing = response.data.updateDrawing.drawing;
 
-     if (updatedDrawing) {
+    if (updatedDrawing) {
       console.log("Drawing updated successfully:", updatedDrawing);
     }
   } catch (error) {
@@ -361,10 +412,7 @@ export const updateDrawing = async(
   }
 };
 
-
-export const updateCatalog = async( 
-  row: ICatalogGridRow
-): Promise<void> => {
+export const updateCatalog = async (row: ICatalogGridRow): Promise<void> => {
   const mutation = gql`
     mutation UpdateCatalog($input: UpdateCatalogInput!) {
       updateCatalog(input: $input) {
@@ -413,9 +461,7 @@ export const updateCatalog = async(
   }
 };
 
-export const updateBom = async(
-  row: IBomGridRow
-): Promise<void> => {
+export const updateBom = async (row: IBomGridRow): Promise<void> => {
   const mutation = gql`
     mutation UpdateBom($input: UpdateBomInput!) {
       updateBom(input: $input) {
@@ -461,10 +507,6 @@ export const updateBom = async(
     console.error("Failed to update Bom", error);
   }
 };
-
-
-
-
 
 export const updateInventory = async (
   row: IInventoryGridRow
