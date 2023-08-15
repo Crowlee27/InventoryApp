@@ -8,90 +8,168 @@ export const apolloClient = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-export const getDrawings = async (): Promise<IDrawingData> => {
-  const query = gql`
-    query {
-      drawings {
-        nodes {
-          id
-          number
-          description
-        }
-      }
-    }
-  `;
-  const { data } = await apolloClient.query({
-    query,
-    fetchPolicy: "network-only",
-  });
-  return data.drawings;
-};
 
-export const getCatalogs = async (): Promise<ICatalogData> => {
-  const query = gql`
-    query {
-      catalogs {
-        nodes {
-          id
-          description
-          size
-          length
-          rating
-          serial
-        }
-      }
-    }
-  `;
-  const { data } = await apolloClient.query({
-    query,
-    fetchPolicy: "network-only",
-  });
-  return data.catalogs;
-};
 
-export const getBoms = async (): Promise<IBomData> => {
-  const query = gql`
-    query {
-      boms {
-        nodes {
-          id
-          drawing
-          catalog
-          tag
-          alias
-        }
-      }
-    }
-  `;
-  const { data } = await apolloClient.query({
-    query,
-    fetchPolicy: "network-only",
-  });
-  return data.boms;
-};
 
-export const getInventories = async (): Promise<IInventoryData> => {
-  const query = gql`
-    query {
-      inventories {
-        nodes {
-          id
-          bom
-          purchased
-          received
-          outstanding
-          issued
-          remaining
-        }
+
+export const allDrawingsQuery = gql`
+  query {
+    drawings {
+      nodes {
+        id
+        number
+        description
       }
     }
-  `;
-  const { data } = await apolloClient.query({
-    query,
-    fetchPolicy: "network-only",
-  });
-  return data.inventories;
-};
+  }
+`;
+
+
+
+
+// export const getDrawings = async (): Promise<IDrawingData> => {
+//   const query = gql`
+//     query {
+//       drawings {
+//         nodes {
+//           id
+//           number
+//           description
+//         }
+//       }
+//     }
+//   `;
+//   const { data } = await apolloClient.query({
+//     query,
+//     fetchPolicy: "network-only",
+//   });
+//   return data.drawings;
+// };
+
+
+export  const allCatalogsQuery = gql`
+  query {
+    catalogs {
+      nodes {
+        id
+        description
+        size
+        length
+        rating
+        serial
+      }
+    }
+  }
+`;
+
+
+
+// export const getCatalogs = async (): Promise<ICatalogData> => {
+//   const query = gql`
+//     query {
+//       catalogs {
+//         nodes {
+//           id
+//           description
+//           size
+//           length
+//           rating
+//           serial
+//         }
+//       }
+//     }
+//   `;
+//   const { data } = await apolloClient.query({
+//     query,
+//     fetchPolicy: "network-only",
+//   });
+//   return data.catalogs;
+// };
+
+
+
+
+export const allBomsQuery = gql`
+  query {
+    boms {
+      nodes {
+        id
+        drawing
+        catalog
+        tag
+        alias
+      }
+    }
+  }
+`;
+
+
+
+
+// export const getBoms = async (): Promise<IBomData> => {
+//   const query = gql`
+//     query {
+//       boms {
+//         nodes {
+//           id
+//           drawing
+//           catalog
+//           tag
+//           alias
+//         }
+//       }
+//     }
+//   `;
+//   const { data } = await apolloClient.query({
+//     query,
+//     fetchPolicy: "network-only",
+//   });
+//   return data.boms;
+// };
+
+
+
+export const allInventoriesQuery = gql`
+  query {
+    inventories {
+      nodes {
+        id
+        bom
+        purchased
+        received
+        outstanding
+        issued
+        remaining
+      }
+    }
+  }
+`;
+
+
+
+
+// export const getInventories = async (): Promise<IInventoryData> => {
+//   const query = gql`
+//     query {
+//       inventories {
+//         nodes {
+//           id
+//           bom
+//           purchased
+//           received
+//           outstanding
+//           issued
+//           remaining
+//         }
+//       }
+//     }
+//   `;
+//   const { data } = await apolloClient.query({
+//     query,
+//     fetchPolicy: "network-only",
+//   });
+//   return data.inventories;
+// };
 
 export const createDrawing = async (
   input: ICreateDrawingInput

@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react";
+import { useQuery } from "@apollo/client";
 import { ColDef, GridApi, GridReadyEvent } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
@@ -9,16 +10,28 @@ import { SearchFilter } from "../../navBars/searchBar/searchFilterGrid";
 import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDialog";
 import { ResetButton } from "../../specialButtons/resetButton";
 import { SearchButton } from "../../specialButtons/searchButton";
-import { getInventories, deleteInventory, updateInventory } from "../../graphQl/queries";
+import {
+  allInventoriesQuery,
+  deleteInventory,
+  updateInventory,
+} from "../../graphQl/queries";
 
 export const InventoryGrid = (props: IInventoryGrid) => {
   const [rowData, setRowData] = useState<IInventoryGridRow[]>([]);
+  const { error, data } = useQuery(allInventoriesQuery);
   useEffect(() => {
-    getInventories().then((inventory) => {
-      const nodesArray = inventory.nodes;
-      setRowData(nodesArray);
-    });
-  }, []);
+    const fetchData = async () => {
+      try {
+        if (data) {
+          const nodesArray = data.inventories.nodes;
+          setRowData(nodesArray);
+        }
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      }
+    };
+    fetchData();
+  }, [data]);
 
   console.log("[InventoryGrid] inventories:", rowData);
 
@@ -47,20 +60,18 @@ export const InventoryGrid = (props: IInventoryGrid) => {
     setSelectedRows(event.api.getSelectedNodes().map((node) => node.data));
   }, []);
 
+  const handleUpdateRows = async (selectedRows: IInventoryGridRow[]) => {
+    try {
+      for (const row of selectedRows) {
+        await updateInventory(row);
+      }
 
-const handleUpdateRows = async (selectedRows: IInventoryGridRow[]) => {
-  try {
-    for (const row of selectedRows) {
-      await updateInventory(row);
+      console.log("Inventory updated successfully");
+    } catch (error) {
+      console.error("Failed to update inventory:", error);
     }
-
-    console.log("Inventory updated successfully");
-  } catch (error) {
-    console.error("Failed to update inventory:", error);
-  }
-  window.location.reload();
-};
-
+    window.location.reload();
+  };
 
   const handleDeleteRows = (selectedRows: IInventoryGridRow[]) => {
     if (selectedRows.length > 0) {
