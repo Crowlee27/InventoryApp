@@ -1,5 +1,4 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react";
-import { useQuery } from "@apollo/client";
 import { ColDef, GridApi, GridReadyEvent } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
@@ -11,28 +10,19 @@ import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDi
 import { ResetButton } from "../../specialButtons/resetButton";
 import { SearchButton } from "../../specialButtons/searchButton";
 import {
-  allInventoriesQuery,
+  getInventories,
   deleteInventory,
   updateInventory,
 } from "../../graphQl/queries";
 
 export const InventoryGrid = (props: IInventoryGrid) => {
   const [rowData, setRowData] = useState<IInventoryGridRow[]>([]);
-  const { error, data } = useQuery(allInventoriesQuery);
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (data) {
-          const nodesArray = data.inventories.nodes;
-          setRowData(nodesArray);
-        }
-      } catch (error) {
-        console.error("Failed to fetch data:", error);
-      }
-    };
-    fetchData();
-  }, [data]);
-
+    getInventories().then((inventory) => {
+      const nodesArray = inventory.nodes;
+      setRowData(nodesArray);
+    });
+  }, []);
   console.log("[InventoryGrid] inventories:", rowData);
 
   const [columnDefs, setColumnDefs] = useState<ColDef[]>([
@@ -70,7 +60,6 @@ export const InventoryGrid = (props: IInventoryGrid) => {
     } catch (error) {
       console.error("Failed to update inventory:", error);
     }
-    window.location.reload();
   };
 
   const handleDeleteRows = (selectedRows: IInventoryGridRow[]) => {
@@ -97,7 +86,6 @@ export const InventoryGrid = (props: IInventoryGrid) => {
       }
     }
     setShowConfirmation(false);
-    window.location.reload();
   };
 
   const defaultColDef = useMemo<IDefaultColDef>(

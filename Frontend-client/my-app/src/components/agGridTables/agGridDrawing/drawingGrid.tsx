@@ -1,5 +1,4 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react";
-import {useQuery} from "@apollo/client";
 import { ColDef, GridApi, GridReadyEvent } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
@@ -10,28 +9,17 @@ import { SearchFilter } from "../../navBars/searchBar/searchFilterGrid";
 import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDialog";
 import { ResetButton } from "../../specialButtons/resetButton";
 import { SearchButton } from "../../specialButtons/searchButton";
-import { deleteDrawing, updateDrawing, allDrawingsQuery } from "../../graphQl/queries";
+import { deleteDrawing, updateDrawing, getDrawings } from "../../graphQl/queries";
 
 export const DrawingGrid = (props: IDrawingGrid) => {
   const [rowData, setRowData] = useState<IDrawingGridRow[]>([]);
-  const {  error, data } = useQuery(allDrawingsQuery);
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (data) {
-          const nodesArray = data.drawings.nodes;
-          setRowData(nodesArray);
-        }
-        
-      } catch (error) {
-        console.error("Failed to fetch data:", error);
-      }
-    };
-    fetchData();
-  }, [data]);
-
-
-  console.log("[DrawingGrid] drawings:", {data, error});
+    getDrawings().then((drawings) => {
+      const nodesArray = drawings.nodes;
+      setRowData(nodesArray);
+    });
+  }, []);
+  console.log("[DrawingGrid] drawings:", rowData);
 
   const [columnDefs, setColumnDefs] = useState<ColDef[]>([
     {
@@ -94,7 +82,6 @@ export const DrawingGrid = (props: IDrawingGrid) => {
       }
     }
     setShowConfirmation(false);
-    window.location.reload();
   };
 
   const defaultColDef = useMemo<IDefaultColDef>(

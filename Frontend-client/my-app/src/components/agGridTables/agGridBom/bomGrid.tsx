@@ -1,5 +1,4 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react";
-import { useQuery } from "@apollo/client";
 import { ColDef, GridApi, GridReadyEvent } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
@@ -10,26 +9,16 @@ import { SearchFilter } from "../../navBars/searchBar/searchFilterGrid";
 import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDialog";
 import { ResetButton } from "../../specialButtons/resetButton";
 import { SearchButton } from "../../specialButtons/searchButton";
-import { allBomsQuery, deleteBom, updateBom } from "../../graphQl/queries";
+import { getBoms, deleteBom, updateBom } from "../../graphQl/queries";
 
 export const BomGrid = (props: IBomGrid) => {
   const [rowData, setRowData] = useState<IBomGridRow[]>([]);
-  const { error, data } = useQuery(allBomsQuery);
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (data) {
-          const nodesArray = data.boms.nodes;
-          setRowData(nodesArray);
-        }
-      } catch (error) {
-        console.error("Failed to fetch data:", error);
-      }
-    };
-    fetchData();
-   }, [data]);
- 
-
+    getBoms().then((boms) => {
+      const nodesArray = boms.nodes;
+      setRowData(nodesArray);
+    });
+  }, []);
   console.log("[BomGrid] boms:", rowData);
 
   const [columnDefs, setColumnDefs] = useState<ColDef[]>([
@@ -64,7 +53,6 @@ export const BomGrid = (props: IBomGrid) => {
     } catch (error) {
       console.error("Failed to update bom:", error);
     }
-    window.location.reload();
   };
 
 
@@ -92,7 +80,6 @@ export const BomGrid = (props: IBomGrid) => {
       }
     }
     setShowConfirmation(false);
-    window.location.reload();
   };
 
   const defaultColDef = useMemo<IDefaultColDef>(

@@ -1,5 +1,4 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react";
-import {useQuery} from "@apollo/client";
 import { ColDef, GridApi, GridReadyEvent } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
@@ -10,27 +9,17 @@ import { SearchFilter } from "../../navBars/searchBar/searchFilterGrid";
 import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDialog";
 import { ResetButton } from "../../specialButtons/resetButton";
 import { SearchButton } from "../../specialButtons/searchButton";
-import { allCatalogsQuery, deleteCatalog, updateCatalog } from "../../graphQl/queries";
+import { getCatalogs, deleteCatalog, updateCatalog } from "../../graphQl/queries";
 
 export const CatalogGrid = (props: ICatalogGrid) => {
   const [rowData, setRowData] = useState<ICatalogGridRow[]>([]);
-  const {  error, data } = useQuery(allCatalogsQuery);
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (data){
-          const nodesArray = data.catalogs.nodes;
-          setRowData(nodesArray);
-        }
-      } catch (error) {
-        console.error("Failed to fetch data:", error);
-      }
-    };
-    fetchData();
-  }, [data]);
-
-
-  console.log("[CatalogGrid] catalogs:", {data,error});
+    getCatalogs().then((catalogs) => {
+      const nodesArray = catalogs.nodes;
+      setRowData(nodesArray);
+    });
+  }, []);
+  console.log("[CatalogGrid] catalogs:", rowData);
 
   const [columnDefs, setColumnDefs] = useState<ColDef[]>([
     {
@@ -65,7 +54,6 @@ export const CatalogGrid = (props: ICatalogGrid) => {
     } catch (error) {
       console.error("Failed to update catalog:", error);
     }
-    window.location.reload();
   }
 
   const handleDeleteRows = (selectedRows: ICatalogGridRow[]) => {
@@ -95,7 +83,6 @@ export const CatalogGrid = (props: ICatalogGrid) => {
       }
     }
     setShowConfirmation(false);
-    window.location.reload();
   };
 
   const defaultColDef = useMemo<IDefaultColDef>(

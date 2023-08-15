@@ -1,175 +1,85 @@
 import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
 import { GraphQLClient } from "graphql-request";
 
-const client = new GraphQLClient("http://localhost:9000/graphql");
+export const client = new GraphQLClient("http://localhost:9000/graphql");
 
 export const apolloClient = new ApolloClient({
   uri: "http://localhost:9000/graphql",
   cache: new InMemoryCache(),
 });
 
-
-
-
-
-export const allDrawingsQuery = gql`
-  query {
-    drawings {
-      nodes {
-        id
-        number
-        description
+export const getDrawings = async (): Promise<IDrawingData> => {
+  const query = gql`
+    query {
+      drawings {
+        nodes {
+          id
+          number
+          description
+        }
       }
     }
-  }
-`;
+  `;
+  const { drawings } = await client.request<{ drawings: any }>(query);
+  return drawings;
+};
 
-
-
-
-// export const getDrawings = async (): Promise<IDrawingData> => {
-//   const query = gql`
-//     query {
-//       drawings {
-//         nodes {
-//           id
-//           number
-//           description
-//         }
-//       }
-//     }
-//   `;
-//   const { data } = await apolloClient.query({
-//     query,
-//     fetchPolicy: "network-only",
-//   });
-//   return data.drawings;
-// };
-
-
-export  const allCatalogsQuery = gql`
-  query {
-    catalogs {
-      nodes {
-        id
-        description
-        size
-        length
-        rating
-        serial
+export const getCatalogs = async (): Promise<ICatalogData> => {
+  const query = gql`
+    query {
+      catalogs {
+        nodes {
+          id
+          description
+          size
+          length
+          rating
+          serial
+        }
       }
     }
-  }
-`;
+  `;
+  const { catalogs } = await client.request<{ catalogs: any }>(query);
+  return catalogs;
+};
 
-
-
-// export const getCatalogs = async (): Promise<ICatalogData> => {
-//   const query = gql`
-//     query {
-//       catalogs {
-//         nodes {
-//           id
-//           description
-//           size
-//           length
-//           rating
-//           serial
-//         }
-//       }
-//     }
-//   `;
-//   const { data } = await apolloClient.query({
-//     query,
-//     fetchPolicy: "network-only",
-//   });
-//   return data.catalogs;
-// };
-
-
-
-
-export const allBomsQuery = gql`
-  query {
-    boms {
-      nodes {
-        id
-        drawing
-        catalog
-        tag
-        alias
+export const getBoms = async (): Promise<IBomData> => {
+  const query = gql`
+    query {
+      boms {
+        nodes {
+          id
+          drawing
+          catalog
+          tag
+          alias
+        }
       }
     }
-  }
-`;
+  `;
+  const { boms } = await client.request<{ boms: any }>(query);
+  return boms;
+};
 
-
-
-
-// export const getBoms = async (): Promise<IBomData> => {
-//   const query = gql`
-//     query {
-//       boms {
-//         nodes {
-//           id
-//           drawing
-//           catalog
-//           tag
-//           alias
-//         }
-//       }
-//     }
-//   `;
-//   const { data } = await apolloClient.query({
-//     query,
-//     fetchPolicy: "network-only",
-//   });
-//   return data.boms;
-// };
-
-
-
-export const allInventoriesQuery = gql`
-  query {
-    inventories {
-      nodes {
-        id
-        bom
-        purchased
-        received
-        outstanding
-        issued
-        remaining
+export const getInventories = async (): Promise<IInventoryData> => {
+  const query = gql`
+    query {
+      inventories {
+        nodes {
+          id
+          bom
+          purchased
+          received
+          outstanding
+          issued
+          remaining
+        }
       }
     }
-  }
-`;
-
-
-
-
-// export const getInventories = async (): Promise<IInventoryData> => {
-//   const query = gql`
-//     query {
-//       inventories {
-//         nodes {
-//           id
-//           bom
-//           purchased
-//           received
-//           outstanding
-//           issued
-//           remaining
-//         }
-//       }
-//     }
-//   `;
-//   const { data } = await apolloClient.query({
-//     query,
-//     fetchPolicy: "network-only",
-//   });
-//   return data.inventories;
-// };
+  `;
+  const { inventories } = await client.request<{ inventories: any }>(query);
+  return inventories;
+};
 
 export const createDrawing = async (
   input: ICreateDrawingInput
@@ -468,11 +378,9 @@ export const updateDrawing = async (row: IDrawingGridRow): Promise<void> => {
     }
   `;
   try {
-    const rowCopy = { ...row };
-
     const input = {
-      id: rowCopy.id,
-      patch: rowCopy,
+      id: row.id,
+      patch: { ...row },
     };
 
     const response = await apolloClient.mutate({
@@ -511,25 +419,12 @@ export const updateCatalog = async (row: ICatalogGridRow): Promise<void> => {
       patch: { ...row },
     };
 
-    const response: {
-      updateCatalog: {
-        catalog: {
-          id: number;
-          description: string;
-          size: string;
-          length: number;
-          rating: string;
-          serial: string;
-        } | null;
-      };
-    } = await client.request(mutation, { input });
+    const response = await apolloClient.mutate({
+      mutation,
+      variables: { input },
+    });
 
-    if (response.updateCatalog === null) {
-      console.error("Failed to update catalog. Null response received.");
-      return;
-    }
-
-    const updatedCatalog = response.updateCatalog.catalog;
+    const updatedCatalog = response.data.updateCatalog.catalog;
 
     if (updatedCatalog) {
       console.log("Catalog updated successfully:", updatedCatalog);
@@ -559,24 +454,11 @@ export const updateBom = async (row: IBomGridRow): Promise<void> => {
       patch: { ...row },
     };
 
-    const response: {
-      updateBom: {
-        bom: {
-          id: number;
-          drawing: number;
-          catalog: number;
-          tag: string;
-          alias: string;
-        } | null;
-      };
-    } = await client.request(mutation, { input });
-
-    if (response.updateBom === null) {
-      console.error("Failed to update bom. Null response received.");
-      return;
-    }
-
-    const updatedBom = response.updateBom.bom;
+    const response = await apolloClient.mutate({
+      mutation,
+      variables: { input },
+    });
+    const updatedBom = response.data.updateBom.bom;
 
     if (updatedBom) {
       console.log("Bom updated successfully:", updatedBom);
@@ -611,26 +493,12 @@ export const updateInventory = async (
       patch: { ...row },
     };
 
-    const response: {
-      updateInventory: {
-        inventory: {
-          id: number;
-          bom: number;
-          purchased: number;
-          received: number;
-          outstanding: number;
-          issued: number;
-          remaining: number;
-        } | null;
-      };
-    } = await client.request(mutation, { input });
+    const response = await apolloClient.mutate({
+      mutation,
+      variables: { input },
+    });
 
-    if (response.updateInventory === null) {
-      console.error("Failed to update inventory. Null response received.");
-      return;
-    }
-
-    const updatedInventory = response.updateInventory.inventory;
+    const updatedInventory = response.data.updateInventory.inventory;
 
     if (updatedInventory) {
       console.log("Inventory updated successfully:", updatedInventory);
