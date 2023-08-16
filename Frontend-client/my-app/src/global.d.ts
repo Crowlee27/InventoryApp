@@ -90,6 +90,8 @@ declare global {
     editable: boolean;
     flex: number;
     suppressMovable: boolean;
+    wrapText: boolean;
+    autoHeight: boolean;
     filterParams: {
       buttons: string[];
     };
