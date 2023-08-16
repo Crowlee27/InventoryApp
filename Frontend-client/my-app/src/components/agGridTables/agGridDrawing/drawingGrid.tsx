@@ -139,7 +139,7 @@ export const DrawingGrid = (props: IDrawingGrid) => {
             <SearchButton onClick={() => filterData(filterValue)} />
             <ResetButton onClick={() => handleReset("")} />
           </div>
-          <div className="addButton">
+          <div>
             <AddDrawingsForm />
           </div>
         </div>

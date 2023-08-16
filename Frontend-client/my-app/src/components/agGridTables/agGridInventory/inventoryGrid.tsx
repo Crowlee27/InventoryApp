@@ -148,7 +148,7 @@ export const InventoryGrid = (props: IInventoryGrid) => {
             <SearchButton onClick={() => filterData(filterValue)} />
             <ResetButton onClick={() => handleReset("")} />
           </div>
-          <div className="addButton">
+          <div>
             <AddDrawingsForm />
           </div>
         </div>

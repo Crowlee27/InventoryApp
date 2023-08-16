@@ -140,7 +140,7 @@ export const CatalogGrid = (props: ICatalogGrid) => {
             <SearchButton onClick={() => filterData(filterValue)} />
             <ResetButton onClick={() => handleReset("")} />
           </div>
-          <div className="addButton">
+          <div>
             <AddDrawingsForm />
           </div>
         </div>

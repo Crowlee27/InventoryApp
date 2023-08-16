@@ -10,7 +10,7 @@ function App() {
   return (
     <ApolloProvider client={apolloClient}>
     <Router>
-      <div>
+      <div className="container">
         <SearchAppBar />
         <PageName />
         <main className="gridContainer">

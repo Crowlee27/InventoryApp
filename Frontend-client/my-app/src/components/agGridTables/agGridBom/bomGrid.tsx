@@ -137,7 +137,7 @@ export const BomGrid = (props: IBomGrid) => {
             <SearchButton onClick={() => filterData(filterValue)} />
             <ResetButton onClick={() => handleReset("")} />
           </div>
-          <div className="addButton">
+          <div>
             <AddDrawingsForm />
           </div>
         </div>

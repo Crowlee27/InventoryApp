@@ -34,6 +34,7 @@ export const SearchFilter = (props: ISearchFilter) => {
         variant="outlined"
         size="small"
         onKeyPress={handleKeyPress}
+        className="searchFilter"
       />
     </div>
   );

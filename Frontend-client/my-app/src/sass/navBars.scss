@@ -1,3 +1,20 @@
+.appBarContainer {
+  flex-grow: 1;
+
+  .appBar {
+    background-color: #345da1;
+
+    .menuButton {
+      margin-right: 20px;
+    }
+
+    .title {
+      flex-grow: 1;
+      display: block;
+    }
+  }
+}
+
 .searchBarContainer {
   display: flex;
   flex-direction: row;
@@ -5,36 +22,43 @@
   align-items: center;
   margin-bottom: 10px;
 
+  Button {
+    height: 40px;
+    border-radius: 5px;
+    margin-left: 10px;
+    flex-shrink: 1;
+    background-color: #345da1;
+  }
+
   .searchBar {
     display: flex;
     flex-direction: row;
     align-items: center;
 
-    .searchButton {
-      margin-left: 10px;
-      background-color: #345da1;
-    }
-
     .resetButton {
-      margin-left: 10px;
+      background-color: #fff;
       border-color: #345da1;
       color: #345da1;
     }
 
     .deleteButton {
+      margin-left: 0px;
       margin-right: 10px;
-      background-color: #345da1;
     }
   }
-  .addButton {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-left: 10px;
-    flex-shrink: 0;
+}
 
-    Button {
-      background-color: #345da1;
-    }
+.dialogContainer {
+  Button {
+    height: 40px;
+    border-radius: 5px;
+    background-color: #345da1;
+    margin-right: 10px;
+  }
+
+  .backButton {
+    background-color: #fff;
+    border: 1px solid #345da1;
+    color: #345da1;
   }
 }
