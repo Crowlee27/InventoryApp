@@ -7,7 +7,7 @@
   width: 100vw;
 }
 
-.ag-theme-alpine.ag-popup {
+.ag-theme-alpine .ag-popup {
   position: absolute;
 }
 
@@ -33,4 +33,31 @@
 
 .ag-theme-alpine .ag-row-hover {
   background-color: #afa8ac4d;
+}
+
+.ag-theme-alpine .ag-header-cell .ag-icon-menu:hover {
+  color: #345da1;
+}
+
+.ag-theme-alpine .ag-popup {
+  background-color: #afa8ac50;
+  border-color: #345da1;
+  font-size: 14px;
+}
+
+.ag-theme-alpine .ag-popup .ag-menu {
+  background-color: #fff;
+  border-color: #345da1;
+  font-family: Helvetica, Arial;
+}
+
+.ag-theme-alpine .ag-popup .ag-button {
+  background-color: #fff;
+  border-color: #345da1;
+  color: #345da1;
+}
+
+.ag-theme-alpine .ag-popup .ag-button:hover {
+  background-color: #345da1;
+  color: #fff;
 }
