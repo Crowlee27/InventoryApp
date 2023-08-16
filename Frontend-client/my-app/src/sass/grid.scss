@@ -3,6 +3,20 @@
 }
 
 .ag-theme-alpine {
-  height: 100vh;
+  height: 83vh;
   width: 100vw;
 }
+
+.ag-theme-alpine .ag-header {
+  // background-color: #709CDB;
+  background-color: #6FADD7;
+  font-size: 14px;
+  font-family: Helvetica, Arial;
+}
+
+
+
+.ag-theme-alpine.ag-popup {
+  position: absolute;
+}
+

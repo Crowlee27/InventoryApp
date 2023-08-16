@@ -1,24 +1,40 @@
-.searchBar {
+.searchBarContainer {
   display: flex;
   flex-direction: row;
-  align-items: center;
-
-  .searchButton {
-    margin-left: 10px;
-  }
-
-  .resetButton {
-    margin-left: 10px;
-  }
-
-  .deleteButton {
-    margin-right: 10px;
-  }
-}
-
-.gridSearchBar {
-  display: flex;
   justify-content: space-between;
   align-items: center;
-}
+  margin-bottom: 10px;
 
+  .searchBar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .searchButton {
+      margin-left: 10px;
+      background-color: #345da1;
+    }
+
+    .resetButton {
+      margin-left: 10px;
+      border-color: #345da1;
+      color: #345da1;
+    }
+
+    .deleteButton {
+      margin-right: 10px;
+      background-color: #345da1;
+    }
+  }
+  .addButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+    flex-shrink: 0;
+
+    Button {
+      background-color: #345da1;
+    }
+  }
+}
