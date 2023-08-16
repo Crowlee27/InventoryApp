@@ -91,6 +91,8 @@ export const CatalogGrid = (props: ICatalogGrid) => {
       filter: true,
       editable: true,
       flex: 1,
+      wrapText: true,
+      autoHeight: true,
       suppressMovable: true,
       filterParams: {
         buttons: ["apply", "reset"],
@@ -120,25 +122,27 @@ export const CatalogGrid = (props: ICatalogGrid) => {
 
   return (
     <div className="ag-theme-alpine">
-      <div className="gridSearchBar">
-        <div className="searchBar">
-          <DeleteButton onClick={() => handleDeleteRows(selectedRows)} />
+      <div>
+        <div className="searchBarContainer">
+          <div className="searchBar">
+            <DeleteButton onClick={() => handleDeleteRows(selectedRows)} />
 
-          <DeleteConfirmationDialog
-            open={showConfirmation}
-            onClose={() => setShowConfirmation(false)}
-            onConfirm={() => handleConfirmDelete(selectedRows)}
-          />
-          <SearchFilter
-            filterValue={filterValue}
-            onFilterChange={setFilterValue}
-            onKeyPress={() => filterData(filterValue)}
-          />
-          <SearchButton onClick={() => filterData(filterValue)} />
-          <ResetButton onClick={() => handleReset("")} />
-        </div>
-        <div>
-          <AddDrawingsForm />
+            <DeleteConfirmationDialog
+              open={showConfirmation}
+              onClose={() => setShowConfirmation(false)}
+              onConfirm={() => handleConfirmDelete(selectedRows)}
+            />
+            <SearchFilter
+              filterValue={filterValue}
+              onFilterChange={setFilterValue}
+              onKeyPress={() => filterData(filterValue)}
+            />
+            <SearchButton onClick={() => filterData(filterValue)} />
+            <ResetButton onClick={() => handleReset("")} />
+          </div>
+          <div className="addButton">
+            <AddDrawingsForm />
+          </div>
         </div>
       </div>
 
@@ -149,6 +153,9 @@ export const CatalogGrid = (props: ICatalogGrid) => {
         defaultColDef={defaultColDef}
         rowSelection="multiple"
         onGridReady={onGridReady}
+        rowBuffer={10}
+        pagination={true}
+        paginationPageSize={50}
         onCellValueChanged={(event) => {
           if (event.oldValue !== event.newValue) {
             handleUpdateRows([event.data]);
