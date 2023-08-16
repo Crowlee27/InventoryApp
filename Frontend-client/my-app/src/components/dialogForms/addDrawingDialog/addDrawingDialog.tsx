@@ -337,7 +337,7 @@ export const AddDrawingsForm = () => {
       <Button variant="contained" onClick={handleOpen}>
         Add Item
       </Button>
-      <Dialog open={open} onClose={handleClose} fullWidth>
+      <Dialog open={open} onClose={handleClose} fullWidth className="dialogContainer">
         <DialogTitle>Add Drawing Number & Item</DialogTitle>
         {renderStepContent()}
         <DialogActions>
@@ -346,17 +346,10 @@ export const AddDrawingsForm = () => {
               <Button onClick={handleNext} variant="contained" color="primary">
                 Next
               </Button>
-              {/* <Button
-                // onClick={handleSubmit}
-                variant="contained"
-                color="primary"
-              >
-                Finish
-              </Button> */}
             </>
           ) : step === 2 ? (
             <>
-              <Button onClick={handleBack}>Back</Button>
+              <Button className="backButton" onClick={handleBack}>Back</Button>
               <Button
                 onClick={handleAddItem}
                 variant="contained"
@@ -364,9 +357,6 @@ export const AddDrawingsForm = () => {
               >
                 Add
               </Button>
-              {/* <Button onClick={handleClose} variant="contained" color="primary">
-                Finish
-              </Button> */}
             </>
           ) : null}
         </DialogActions>
