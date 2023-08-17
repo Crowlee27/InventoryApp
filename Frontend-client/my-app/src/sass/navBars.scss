@@ -15,6 +15,16 @@
   }
 }
 
+
+.header{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 10px;
+}
+
 .searchBarContainer {
   display: flex;
   flex-direction: row;
@@ -28,6 +38,7 @@
     margin-left: 10px;
     flex-shrink: 1;
     background-color: #345da1;
+    font-family:  Helvetica,Arial;
   }
 
   .searchBar {
@@ -48,12 +59,13 @@
   }
 }
 
-.dialogContainer {
+.addDialogContainer {
   Button {
     height: 40px;
     border-radius: 5px;
     background-color: #345da1;
     margin-right: 10px;
+    font-family:  Helvetica,Arial;
   }
 
   .backButton {
@@ -61,4 +73,22 @@
     border: 1px solid #345da1;
     color: #345da1;
   }
+}
+
+
+.deleteDialogContainer{
+  Button{
+    height: 40px;
+    border-radius: 5px;
+    background-color: #345da1;
+    margin-right: 10px;
+    font-family:  Helvetica,Arial;
+  }
+  .deleteCancelButton{
+    background-color: #fff;
+    border: 1px solid #345da1;
+    color: #345da1;
+  }
+
+  
 }

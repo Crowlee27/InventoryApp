@@ -337,7 +337,7 @@ export const AddDrawingsForm = () => {
       <Button variant="contained" onClick={handleOpen}>
         Add Item
       </Button>
-      <Dialog open={open} onClose={handleClose} fullWidth className="dialogContainer">
+      <Dialog open={open} onClose={handleClose} fullWidth className="addDialogContainer">
         <DialogTitle>Add Drawing Number & Item</DialogTitle>
         {renderStepContent()}
         <DialogActions>

@@ -7,7 +7,8 @@ import React, {
 import { ColDef, GridApi, GridReadyEvent } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-alpine.css";
+// import "ag-grid-community/styles/ag-theme-alpine.css";
+import "ag-grid-community/styles/ag-theme-material.css";
 import { DeleteButton } from "../../specialButtons/deleteButton";
 import { DeleteConfirmationDialog } from "../../dialogForms/deleteDialog/deleteDialog";
 import { SearchFilter } from "../../navBars/searchBar/searchFilterGrid";
@@ -37,7 +38,7 @@ export const InventoryGrid = (props: IInventoryGrid) => {
       headerCheckboxSelection: true,
       editable: false,
       pinned: "left",
-      width: 100,
+      width: 140,
     },
     { field: "bom", editable: false },
     { field: "purchased" },
@@ -129,7 +130,7 @@ export const InventoryGrid = (props: IInventoryGrid) => {
   };
 
   return (
-    <div className="ag-theme-alpine">
+    <div className="ag-theme-material">
       <div>
         <div className="searchBarContainer">
           <div className="searchBar">

@@ -2,9 +2,75 @@
   display: flex;
 }
 
-.ag-theme-alpine {
-  height: 83vh;
+.ag-theme-material {
+  height: 100vh;
   width: 100vw;
+  --ag-material-primary-color: #345da1 --ag-material-accent-color #a6abbd;
+  --ag-checkbox-checked-color: #345da1;
+  --ag-selected-row-background-color: #a6abbd50;
+  --ag-checkbox-unchecked-color: #a6abbd;
+  --ag-font-family: Helvetica, Arial;
+  --ag-font-size: 14px;
+  --ag-input-focus-box-shadow: none;
+}
+
+.ag-paging-panel {
+  font-weight: 600;
+  color: #345da1;
+}
+
+.ag-theme-material .ag-popup {
+  position: absolute;
+}
+
+.ag-theme-material .ag-header-cell-text {
+  font-size: 14px;
+  color: #345da1;
+}
+
+.ag-theme-material .ag-icon.ag-icon-next {
+  color: #345da1;
+}
+
+.ag-theme-material .ag-icon.ag-icon-last {
+  color: #345da1;
+}
+
+.ag-theme-material .ag-icon.ag-icon-previous {
+  color: #a6abbd;
+}
+
+.ag-theme-material .ag-icon.ag-icon-first {
+  color: #a6abbd;
+}
+
+.ag-theme-material .ag-icon-menu:hover {
+  color: #345da1;
+}
+
+.ag-theme-material .ag-icon-menu:before {
+  color: #345da1;
+}
+
+.ag-theme-material .ag-sort-indicator-icon {
+  color: #345da1;
+  padding: 0px 0px 0px 0px;
+}
+
+.ag-theme-material .ag-popup .ag-button {
+  background-color: #fff;
+  border-color: #345da1;
+  color: #345da1;
+}
+
+.ag-theme-material .ag-ltr .ag-cell:focus {
+  border-color: #345da1;
+}
+
+//------------------------------------Alpine theme below
+.ag-theme-alpine {
+  height: 100vh;
+  width: 100vh;
 }
 
 .ag-theme-alpine .ag-popup {

@@ -22,11 +22,11 @@ export const DeleteConfirmationDialog = (props: IDeleteConfirmationDialog) => {
           Are you sure you want to delete the selected items?
         </DialogContentText>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} color="primary">
+      <DialogActions className="deleteDialogContainer">
+        <Button className="deleteCancelButton" onClick={onClose} color="primary">
           Cancel
         </Button>
-        <Button onClick={handleConfirm} color="primary">
+        <Button className="deleteDeleteButton" onClick={handleConfirm} variant="contained" color="primary">
           Delete
         </Button>
       </DialogActions>
