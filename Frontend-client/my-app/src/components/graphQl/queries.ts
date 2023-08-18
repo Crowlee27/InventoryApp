@@ -1,85 +1,66 @@
 import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
-import { GraphQLClient } from "graphql-request";
-
-export const client = new GraphQLClient("http://localhost:9000/graphql");
 
 export const apolloClient = new ApolloClient({
   uri: "http://localhost:9000/graphql",
   cache: new InMemoryCache(),
 });
 
-export const getDrawings = async (): Promise<IDrawingData> => {
-  const query = gql`
-    query {
-      drawings {
-        nodes {
-          id
-          number
-          description
-        }
+export const getDrawingsQuery = gql`
+  query {
+    drawings {
+      nodes {
+        id
+        number
+        description
       }
     }
-  `;
-  const { drawings } = await client.request<{ drawings: any }>(query);
-  return drawings;
-};
+  }
+`;
 
-export const getCatalogs = async (): Promise<ICatalogData> => {
-  const query = gql`
-    query {
-      catalogs {
-        nodes {
-          id
-          description
-          size
-          length
-          rating
-          serial
-        }
+export const getCatalogsQuery = gql`
+  query {
+    catalogs {
+      nodes {
+        id
+        description
+        size
+        length
+        rating
+        serial
       }
     }
-  `;
-  const { catalogs } = await client.request<{ catalogs: any }>(query);
-  return catalogs;
-};
+  }
+`;
 
-export const getBoms = async (): Promise<IBomData> => {
-  const query = gql`
-    query {
-      boms {
-        nodes {
-          id
-          drawing
-          catalog
-          tag
-          alias
-        }
+export const getBomsQuery = gql`
+  query {
+    boms {
+      nodes {
+        id
+        drawing
+        catalog
+        tag
+        alias
       }
     }
-  `;
-  const { boms } = await client.request<{ boms: any }>(query);
-  return boms;
-};
+  }
+`;
 
-export const getInventories = async (): Promise<IInventoryData> => {
-  const query = gql`
-    query {
-      inventories {
-        nodes {
-          id
-          bom
-          purchased
-          received
-          outstanding
-          issued
-          remaining
-        }
+export const getInventoryQuery = gql`
+  query {
+    inventories {
+      nodes {
+        id
+        bom
+        purchased
+        received
+        outstanding
+        issued
+        remaining
       }
     }
-  `;
-  const { inventories } = await client.request<{ inventories: any }>(query);
-  return inventories;
-};
+  }
+`;
 
 export const createDrawing = async (
   input: ICreateDrawingInput
@@ -137,16 +118,6 @@ export const checkDrawingExists = async (
   }
 };
 
-interface ICreateCatalogInput {
-  catalog: {
-    description: string;
-    size: string;
-    length: string;
-    rating: string;
-    serial: string;
-  };
-}
-
 export const createCatalog = async (
   input: ICreateCatalogInput
 ): Promise<{ catalog: string; id: number }> => {
@@ -168,15 +139,6 @@ export const createCatalog = async (
   return { id, catalog };
 };
 
-interface ICreateBomInput {
-  bom: {
-    drawing: number;
-    catalog: number;
-    tag: string;
-    alias: string;
-  };
-}
-
 export const createBom = async (
   input: ICreateBomInput
 ): Promise<{ bom: string; id: number }> => {
@@ -197,13 +159,6 @@ export const createBom = async (
   const bom = data.createBom.bom;
   return { id, bom };
 };
-
-interface ICreateInventoryInput {
-  inventory: {
-    bom: number;
-    purchased: number;
-  };
-}
 
 export const createInventory = async (
   input: ICreateInventoryInput
@@ -365,145 +320,59 @@ export const deleteInventory = async (id: number): Promise<void> => {
   }
 };
 
-export const updateDrawing = async (row: IDrawingGridRow): Promise<void> => {
-  const mutation = gql`
-    mutation UpdateDrawing($input: UpdateDrawingInput!) {
-      updateDrawing(input: $input) {
-        drawing {
-          id
-          description
-          number
-        }
+export const updateDrawingMutation = gql`
+  mutation UpdateDrawing($input: UpdateDrawingInput!) {
+    updateDrawing(input: $input) {
+      drawing {
+        id
+        description
+        number
       }
     }
-  `;
-  try {
-    const input = {
-      id: row.id,
-      patch: { ...row },
-    };
-
-    const response = await apolloClient.mutate({
-      mutation,
-      variables: { input },
-    });
-
-    const updatedDrawing = response.data.updateDrawing.drawing;
-
-    if (updatedDrawing) {
-      console.log("Drawing updated successfully:", updatedDrawing);
-    }
-  } catch (error) {
-    console.error("Failed to update Drawing", error);
   }
-};
+`;
 
-export const updateCatalog = async (row: ICatalogGridRow): Promise<void> => {
-  const mutation = gql`
-    mutation UpdateCatalog($input: UpdateCatalogInput!) {
-      updateCatalog(input: $input) {
-        catalog {
-          id
-          description
-          size
-          length
-          rating
-          serial
-        }
+export const updateCatalogMutation = gql`
+  mutation UpdateCatalog($input: UpdateCatalogInput!) {
+    updateCatalog(input: $input) {
+      catalog {
+        id
+        description
+        size
+        length
+        rating
+        serial
       }
     }
-  `;
-  try {
-    const input = {
-      id: row.id,
-      patch: { ...row },
-    };
-
-    const response = await apolloClient.mutate({
-      mutation,
-      variables: { input },
-    });
-
-    const updatedCatalog = response.data.updateCatalog.catalog;
-
-    if (updatedCatalog) {
-      console.log("Catalog updated successfully:", updatedCatalog);
-    }
-  } catch (error) {
-    console.error("Failed to update Catalog", error);
   }
-};
+`;
 
-export const updateBom = async (row: IBomGridRow): Promise<void> => {
-  const mutation = gql`
-    mutation UpdateBom($input: UpdateBomInput!) {
-      updateBom(input: $input) {
-        bom {
-          id
-          drawing
-          catalog
-          tag
-          alias
-        }
+export const updateBomMutation = gql`
+  mutation UpdateBom($input: UpdateBomInput!) {
+    updateBom(input: $input) {
+      bom {
+        id
+        drawing
+        catalog
+        tag
+        alias
       }
     }
-  `;
-  try {
-    const input = {
-      id: row.id,
-      patch: { ...row },
-    };
-
-    const response = await apolloClient.mutate({
-      mutation,
-      variables: { input },
-    });
-    const updatedBom = response.data.updateBom.bom;
-
-    if (updatedBom) {
-      console.log("Bom updated successfully:", updatedBom);
-    }
-  } catch (error) {
-    console.error("Failed to update Bom", error);
   }
-};
+`;
 
-export const updateInventory = async (
-  row: IInventoryGridRow
-): Promise<void> => {
-  const mutation = gql`
-    mutation UpdateInventory($input: UpdateInventoryInput!) {
-      updateInventory(input: $input) {
-        inventory {
-          id
-          bom
-          purchased
-          received
-          outstanding
-          issued
-          remaining
-        }
+export const updateInventoryMutation = gql`
+  mutation UpdateInventory($input: UpdateInventoryInput!) {
+    updateInventory(input: $input) {
+      inventory {
+        id
+        bom
+        purchased
+        received
+        outstanding
+        issued
+        remaining
       }
     }
-  `;
-
-  try {
-    const input = {
-      id: row.id,
-      patch: { ...row },
-    };
-
-    const response = await apolloClient.mutate({
-      mutation,
-      variables: { input },
-    });
-
-    const updatedInventory = response.data.updateInventory.inventory;
-
-    if (updatedInventory) {
-      console.log("Inventory updated successfully:", updatedInventory);
-    }
-  } catch (error) {
-    console.error("Failed to update inventory", error);
   }
-};
+`;

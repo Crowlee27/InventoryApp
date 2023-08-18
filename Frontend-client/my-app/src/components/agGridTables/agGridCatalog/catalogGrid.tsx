@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react";
+import { useQuery, useMutation } from "@apollo/client";
 import { ColDef, GridApi, GridReadyEvent } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
@@ -10,17 +11,27 @@ import { SearchFilter } from "../../navBars/searchBar/searchFilterGrid";
 import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDialog";
 import { ResetButton } from "../../specialButtons/resetButton";
 import { SearchButton } from "../../specialButtons/searchButton";
-import { getCatalogs, deleteCatalog, updateCatalog } from "../../graphQl/queries";
+import {
+  getCatalogsQuery,
+  deleteCatalog,
+  updateCatalogMutation,
+} from "../../graphQl/queries";
 
 export const CatalogGrid = (props: ICatalogGrid) => {
+  const { loading, error, data } = useQuery(getCatalogsQuery);
   const [rowData, setRowData] = useState<ICatalogGridRow[]>([]);
+  const [updateCell] = useMutation(updateCatalogMutation);
+
   useEffect(() => {
-    getCatalogs().then((catalogs) => {
-      const nodesArray = catalogs.nodes;
+    console.log("Loading state:", loading);
+    console.log("Error state:", error);
+    console.log("Data state:", data);
+
+    if (data) {
+      const nodesArray = data.catalogs.nodes;
       setRowData(nodesArray);
-    });
-  }, []);
-  console.log("[CatalogGrid] catalogs:", rowData);
+    }
+  }, [data, loading, error]);
 
   const [columnDefs, setColumnDefs] = useState<ColDef[]>([
     {
@@ -46,17 +57,6 @@ export const CatalogGrid = (props: ICatalogGrid) => {
     setSelectedRows(event.api.getSelectedNodes().map((node) => node.data));
   }, []);
 
-  const handleUpdateRows = async (selectedRows: ICatalogGridRow[]) => {
-    try {
-      for (const row of selectedRows) {
-        await updateCatalog(row);
-      }
-      console.log(" Catalog updated successfully");
-    } catch (error) {
-      console.error("Failed to update catalog:", error);
-    }
-  }
-
   const handleDeleteRows = (selectedRows: ICatalogGridRow[]) => {
     if (selectedRows.length > 0) {
       setShowConfirmation(true);
@@ -65,14 +65,11 @@ export const CatalogGrid = (props: ICatalogGrid) => {
     }
   };
 
-  
-
-
   const handleConfirmDelete = async (selectedRows: ICatalogGridRow[]) => {
     if (selectedRows.length > 0) {
       try {
         for (const row of selectedRows) {
-         await deleteCatalog(row.id);
+          await deleteCatalog(row.id);
         }
         const updatedRowData = rowData.filter(
           (row) => !selectedRows.includes(row)
@@ -121,6 +118,28 @@ export const CatalogGrid = (props: ICatalogGrid) => {
     setFilterValue("");
   };
 
+  const onCellValueChanged = async (params: any) => {
+    const { data, colDef, newValue } = params;
+    const { id } = data;
+
+    if (id && colDef.field && newValue !== undefined) {
+      try {
+        const input = {
+          id: id,
+          patch: {
+            [colDef.field]: newValue,
+          },
+        };
+
+        await updateCell({
+          variables: { input },
+        });
+      } catch (error) {
+        console.log("Error updating cell:", error);
+      }
+    }
+  };
+
   return (
     <div className="ag-theme-material">
       <div>
@@ -157,11 +176,8 @@ export const CatalogGrid = (props: ICatalogGrid) => {
         rowBuffer={10}
         pagination={true}
         paginationPageSize={50}
-        onCellValueChanged={(event) => {
-          if (event.oldValue !== event.newValue) {
-            handleUpdateRows([event.data]);
-          }
-        }}
+        readOnlyEdit={true}
+        onCellEditRequest={onCellValueChanged}
       />
     </div>
   );

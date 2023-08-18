@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react";
+import { useQuery, useMutation } from "@apollo/client";
 import { ColDef, GridApi, GridReadyEvent } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
@@ -10,17 +11,27 @@ import { SearchFilter } from "../../navBars/searchBar/searchFilterGrid";
 import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDialog";
 import { ResetButton } from "../../specialButtons/resetButton";
 import { SearchButton } from "../../specialButtons/searchButton";
-import { getBoms, deleteBom, updateBom } from "../../graphQl/queries";
+import {
+  getBomsQuery,
+  deleteBom,
+  updateBomMutation,
+} from "../../graphQl/queries";
 
 export const BomGrid = (props: IBomGrid) => {
+  const { loading, error, data } = useQuery(getBomsQuery);
   const [rowData, setRowData] = useState<IBomGridRow[]>([]);
+  const [updateCell] = useMutation(updateBomMutation);
+
   useEffect(() => {
-    getBoms().then((boms) => {
-      const nodesArray = boms.nodes;
+    console.log("Loading state:", loading);
+    console.log("Error state:", error);
+    console.log("Data state:", data);
+
+    if (data) {
+      const nodesArray = data.boms.nodes;
       setRowData(nodesArray);
-    });
-  }, []);
-  console.log("[BomGrid] boms:", rowData);
+    }
+  }, [data, loading, error]);
 
   const [columnDefs, setColumnDefs] = useState<ColDef[]>([
     {
@@ -44,18 +55,6 @@ export const BomGrid = (props: IBomGrid) => {
   const handleRowSelected = useCallback((event: GridReadyEvent) => {
     setSelectedRows(event.api.getSelectedNodes().map((node) => node.data));
   }, []);
-
-  const handleUpdateRows = async (selectedRows: IBomGridRow[]) => {
-    try {
-      for (const row of selectedRows) {
-        await updateBom(row);
-      }
-      console.log(" Bom updated successfully");
-    } catch (error) {
-      console.error("Failed to update bom:", error);
-    }
-  };
-
 
   const handleDeleteRows = (selectedRows: IBomGridRow[]) => {
     if (selectedRows.length > 0) {
@@ -118,6 +117,28 @@ export const BomGrid = (props: IBomGrid) => {
     setFilterValue("");
   };
 
+  const onCellValueChanged = async (params: any) => {
+    const { data, colDef, newValue } = params;
+    const { id } = data;
+
+    if (id && colDef.field && newValue !== undefined) {
+      try {
+        const input = {
+          id: id,
+          patch: {
+            [colDef.field]: newValue,
+          },
+        };
+
+        await updateCell({
+          variables: { input },
+        });
+      } catch (error) {
+        console.log("Error updating cell:", error);
+      }
+    }
+  };
+
   return (
     <div className="ag-theme-material">
       <div>
@@ -154,11 +175,8 @@ export const BomGrid = (props: IBomGrid) => {
         rowBuffer={10}
         pagination={true}
         paginationPageSize={50}
-        onCellValueChanged={(event) => {
-          if (event.oldValue !== event.newValue) {
-            handleUpdateRows([event.data]);
-          }
-        }}
+        readOnlyEdit={true}
+        onCellEditRequest={onCellValueChanged}
       />
     </div>
   );

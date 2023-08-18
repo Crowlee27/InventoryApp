@@ -1,9 +1,5 @@
-import React, {
-  useMemo,
-  useState,
-  useCallback,
-  useEffect,
-} from "react";
+import React, { useMemo, useState, useCallback, useEffect } from "react";
+import { useQuery, useMutation } from "@apollo/client";
 import { ColDef, GridApi, GridReadyEvent } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
@@ -16,20 +12,26 @@ import { AddDrawingsForm } from "../../dialogForms/addDrawingDialog/addDrawingDi
 import { ResetButton } from "../../specialButtons/resetButton";
 import { SearchButton } from "../../specialButtons/searchButton";
 import {
-  getInventories,
   deleteInventory,
-  updateInventory,
+  getInventoryQuery,
+  updateInventoryMutation,
 } from "../../graphQl/queries";
 
 export const InventoryGrid = (props: IInventoryGrid) => {
+  const { loading, error, data } = useQuery(getInventoryQuery);
   const [rowData, setRowData] = useState<IInventoryGridRow[]>([]);
+  const [updateCell] = useMutation(updateInventoryMutation);
+
   useEffect(() => {
-    getInventories().then((inventory) => {
-      const nodesArray = inventory.nodes;
+    console.log("Loading state:", loading);
+    console.log("Error state:", error);
+    console.log("Data state:", data);
+
+    if (data) {
+      const nodesArray = data.inventories.nodes;
       setRowData(nodesArray);
-    });
-  }, []);
-  console.log("[InventoryGrid] inventories:", rowData);
+    }
+  }, [data, loading, error]);
 
   const [columnDefs, setColumnDefs] = useState<ColDef[]>([
     {
@@ -41,8 +43,12 @@ export const InventoryGrid = (props: IInventoryGrid) => {
       width: 140,
     },
     { field: "bom", editable: false },
-    { field: "purchased" },
-    { field: "received" },
+    {
+      field: "purchased",
+    },
+    {
+      field: "received",
+    },
     { field: "outstanding" },
     { field: "issued" },
     { field: "remaining" },
@@ -55,18 +61,6 @@ export const InventoryGrid = (props: IInventoryGrid) => {
   const handleRowSelected = useCallback((event: GridReadyEvent) => {
     setSelectedRows(event.api.getSelectedNodes().map((node) => node.data));
   }, []);
-
-  const handleUpdateRows = async (selectedRows: IInventoryGridRow[]) => {
-    try {
-      for (const row of selectedRows) {
-        await updateInventory(row);
-      }
-
-      console.log("Inventory updated successfully");
-    } catch (error) {
-      console.error("Failed to update inventory:", error);
-    }
-  };
 
   const handleDeleteRows = (selectedRows: IInventoryGridRow[]) => {
     if (selectedRows.length > 0) {
@@ -129,6 +123,28 @@ export const InventoryGrid = (props: IInventoryGrid) => {
     setFilterValue("");
   };
 
+  const onCellValueChanged = async (params: any) => {
+    const { data, colDef, newValue } = params;
+    const { id } = data;
+
+    if (id && colDef.field && newValue !== undefined) {
+      try {
+        const input = {
+          id: id,
+          patch: {
+            [colDef.field]: newValue,
+          },
+        };
+
+        await updateCell({
+          variables: { input },
+        });
+      } catch (error) {
+        console.log("Error updating cell:", error);
+      }
+    }
+  };
+
   return (
     <div className="ag-theme-material">
       <div>
@@ -165,11 +181,8 @@ export const InventoryGrid = (props: IInventoryGrid) => {
         rowBuffer={10}
         pagination={true}
         paginationPageSize={50}
-        onCellValueChanged={(event) => {
-          if (event.oldValue !== event.newValue) {
-            handleUpdateRows([event.data]);
-          }
-        }}
+        readOnlyEdit={true}
+        onCellEditRequest={onCellValueChanged}
       />
     </div>
   );
