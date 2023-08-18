@@ -11,7 +11,7 @@ declare global {
     value?: string;
     setNewNumber?: (number: string) => void;
     setNewItemDescription?;
-    setNewItemPurchased?
+    setNewItemPurchased?;
   }
 
   interface ITextFieldsProps {
@@ -139,11 +139,37 @@ declare global {
     drawingNumber: string;
     drawingDescription: string;
   }
-
+//-----for queries.ts
   interface ICreateDrawingInput {
     drawing: {
       number: string;
       description: string;
+    };
+  }
+
+  interface ICreateCatalogInput {
+    catalog: {
+      description: string;
+      size: string;
+      length: string;
+      rating: string;
+      serial: string;
+    };
+  }
+
+  interface ICreateBomInput {
+    bom: {
+      drawing: number;
+      catalog: number;
+      tag: string;
+      alias: string;
+    };
+  }
+
+  interface ICreateInventoryInput {
+    inventory: {
+      bom: number;
+      purchased: number;
     };
   }
 }
