@@ -49,9 +49,9 @@ export const InventoryGrid = (props: IInventoryGrid) => {
     {
       field: "received",
     },
-    { field: "outstanding" },
+    { field: "outstanding", editable: false  },
     { field: "issued" },
-    { field: "remaining" },
+    { field: "remaining", editable: false },
   ]);
 
   const [showConfirmation, setShowConfirmation] = useState(false);
