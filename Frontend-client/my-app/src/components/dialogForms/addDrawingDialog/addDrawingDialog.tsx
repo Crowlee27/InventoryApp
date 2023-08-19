@@ -169,8 +169,11 @@ export const AddDrawingsForm = () => {
       },
     };
 
-    if (!inputDrawing.drawing.description || !inputDrawing.drawing.number) {
-      console.error("Number and Description are required for drawing");
+    if (!inputDrawing.drawing.description || !inputDrawing.drawing.number || !itemFormData.itemDescription || !itemFormData.itemSize || !itemFormData.itemPurchased || !itemFormData.itemSerial || !itemFormData.itemTag) {
+      console.error(
+        "Drawing number and description, along with the item description, size, serial, tag, and how many purchased is required. Thank You"
+      );
+      alert("Drawing number and description, along with the item description, size, serial, tag, and how many purchased is required. Thank You")
       return;
     }
 
