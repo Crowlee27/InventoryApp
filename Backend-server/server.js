@@ -15,19 +15,6 @@ const pool = new pkg.Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
-app.use((err, res) => {
-  console.error("An error occurred", err);
-  res.status(500).json({ error: "An error occurred" });
-});
-
-app.get("/", (_, res) => {
-  res.send("Inventory API");
-});
-
-app.use((_, res) => {
-  res.status(404).json({ error: "Resource not found" });
-});
-
 pool.query("SELECT NOW()", (err, res) => {
   if (err) {
     console.error("Error connecting to the database", err);
