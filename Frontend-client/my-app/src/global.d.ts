@@ -3,6 +3,8 @@ import React from "react";
 export {};
 
 declare global {
+  //-----for form inputs
+
   interface ITextField {
     name: string;
     label: string;
@@ -26,6 +28,56 @@ declare global {
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
     setNewDescription?;
   }
+
+  //-----for gridSearchBar and gridButtons
+
+  interface IDeleteButton {
+    onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  }
+
+  interface IDeleteConfirmationDialog {
+    open: boolean;
+    onClose: (event: React.MouseEvent<HTMLButtonElement>) => void;
+    onConfirm: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  }
+
+  interface IResetButton {
+    onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  }
+
+  interface ISearchButton {
+    onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  }
+
+  interface ISearchFilter {
+    filterValue: string;
+    onFilterChange: (value: string) => void;
+    onKeyPress: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+  }
+
+  interface IDrawingFormFields {
+    setNewNumber: (number: string) => void;
+    setNewDescription: (description: string) => void;
+    drawingNumber: string;
+    drawingDescription: string;
+  }
+
+  //-----for grid column shape
+
+  interface IDefaultColDef {
+    sortable: boolean;
+    filter: boolean;
+    editable: boolean;
+    flex: number;
+    suppressMovable: boolean;
+    wrapText: boolean;
+    autoHeight: boolean;
+    filterParams: {
+      buttons: string[];
+    };
+  }
+
+  //-----for grid data shape
 
   interface IDrawingGridRow {
     id: number;
@@ -58,43 +110,6 @@ declare global {
     outstanding: number;
     issued: number;
     remaining: number;
-  }
-
-  interface IDeleteButton {
-    onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  }
-
-  interface IDeleteConfirmationDialog {
-    open: boolean;
-    onClose: (event: React.MouseEvent<HTMLButtonElement>) => void;
-    onConfirm: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  }
-
-  interface IResetButton {
-    onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  }
-
-  interface ISearchButton {
-    onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  }
-
-  interface ISearchFilter {
-    filterValue: string;
-    onFilterChange: (value: string) => void;
-    onKeyPress: (event: React.KeyboardEvent<HTMLInputElement>) => void;
-  }
-
-  interface IDefaultColDef {
-    sortable: boolean;
-    filter: boolean;
-    editable: boolean;
-    flex: number;
-    suppressMovable: boolean;
-    wrapText: boolean;
-    autoHeight: boolean;
-    filterParams: {
-      buttons: string[];
-    };
   }
 
   interface IDrawingGrid {
@@ -133,13 +148,7 @@ declare global {
     nodes: IInventoryGridRow[];
   }
 
-  interface IDrawingFormFields {
-    setNewNumber: (number: string) => void;
-    setNewDescription: (description: string) => void;
-    drawingNumber: string;
-    drawingDescription: string;
-  }
-//-----for queries.ts
+  //-----for queries.ts
   interface ICreateDrawingInput {
     drawing: {
       number: string;
